@@ -9,9 +9,9 @@
         android:icon="@drawable/ic_search_white"
         android:orderInCategory="10"
         app:showAsAction="always"/>
-    <item android:id="@+id/action_blogs"
-        android:title="@string/action_blogs"
-        android:icon="@drawable/ic_rss_feed_white"
+    <item android:id="@+id/action_maps"
+        android:title="@string/action_maps"
+        android:icon="@drawable/ic_public_white"
         android:orderInCategory="20"
         app:showAsAction="always"/>
 <!--

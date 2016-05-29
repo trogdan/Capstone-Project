@@ -29,7 +29,7 @@ public class BlogsItemRecyclerViewAdapter extends RecyclerView.Adapter<BlogsItem
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_blogs_item, parent, false);
+                .inflate(R.layout.fragment_blogs, parent, false);
         return new ViewHolder(view);
     }
 

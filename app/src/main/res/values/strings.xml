@@ -1,15 +1,28 @@
 <resources>
     <string name="app_name">Marker</string>
-    <string name="title_activity_maps">Map</string>
+
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_blogs">BlogsActivity</string>
+
     <string-array name="activity_navigation_array">
         <item>Maps</item>
         <item>Blogs</item>
         <item>Settings</item>
     </string-array>
-    <string name="drawer_open">Open navigation drawer</string>
-    <string name="drawer_close">Close navigation drawer</string>
-    <string name="action_websearch">Web search</string>
+
+
+    <!-- Actions -->
+    <string name="action_search">Search</string>
     <string name="action_settings">Settings</string>
     <string name="action_blogs">Blogs</string>
-    <string name="title_activity_blogs">BlogsActivity</string>
+    <string name="action_maps">Maps</string>
+
+
+    <!-- Empty Blogs Database -->
+    <string name="empty_blogs_list">No Blog Information Available</string>
+    <string name="empty_blogs_list_no_network">No blog information available. The network is not available to fetch blog data.</string>
+    <string name="empty_blogs_list_server_down">No blog information available. The server is not returning data.</string>
+    <string name="empty_blogs_list_server_error">No blog information available. The server is not returning valid data. Please check for an updated version of Marker.</string>
+    <string name="empty_blogs_list_invalid_location">No blog information available. The location in settings is not recognized by the blog server.</string>
+
 </resources>
