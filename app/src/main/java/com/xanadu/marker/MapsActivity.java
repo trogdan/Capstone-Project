@@ -1,5 +1,6 @@
 package com.xanadu.marker;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -57,9 +58,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                return true;
             //noinspection SimplifiableIfStatement
             case R.id.action_blogs:
-                //TODO startActivity(new Intent(this, SettingsActivity.class));
+                startActivity(new Intent(this, BlogsActivity.class));
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
