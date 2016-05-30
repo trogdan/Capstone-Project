@@ -12,12 +12,17 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.xanadu.marker.data.UpdaterService;
+import com.xanadu.marker.remote.MarkerWfsUtil;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private LatLngBounds mLatestBounds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +62,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                }
 //                return true;
             //noinspection SimplifiableIfStatement
+            case R.id.action_search:
+                Intent searchIntent = new Intent(this, UpdaterService.class);
+                searchIntent.putExtra(UpdaterService.EXTRA_WFS_QUERY_BOX, mLatestBounds);
+                startService(searchIntent);
+                return true;
             case R.id.action_blogs:
                 startActivity(new Intent(this, BlogsActivity.class));
                 return true;
@@ -78,9 +88,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition position) {
+                mLatestBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+            }
+        });
+
     }
 }

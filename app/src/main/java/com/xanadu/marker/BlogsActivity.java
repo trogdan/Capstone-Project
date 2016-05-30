@@ -45,9 +45,9 @@ public class BlogsActivity extends AppCompatActivity implements BlogsFragment.On
         // Handle action buttons
         switch(item.getItemId()) {
             //noinspection SimplifiableIfStatement
-            case R.id.action_maps:
-                startActivity(new Intent(this, MapsActivity.class));
-                return true;
+//            case R.id.action_maps:
+//                startActivity(new Intent(this, MapsActivity.class));
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

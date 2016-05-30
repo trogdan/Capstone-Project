@@ -20,6 +20,8 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
@@ -381,4 +383,5 @@ public class MarkerProvider extends ContentProvider {
         mOpenHelper.close();
         super.shutdown();
     }
+
 }

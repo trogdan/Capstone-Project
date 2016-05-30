@@ -45,6 +45,13 @@ public class MarkerContract {
     public static final String PATH_PLACE = "place";
     public static final String PATH_BLOG = "blog";
 
+    public static final String MARKER_DB_PLACE_PLACE_ID = "place_id";
+    public static final String MARKER_DB_PLACE_GOO_ID = "goo_id";
+    public static final String MARKER_DB_PLACE_NAME = "name";
+    public static final String MARKER_DB_PLACE_ABOUT = "about";
+    public static final String MARKER_DB_POST_POST_ID = "post_id";
+    public static final String MARKER_DB_BLOG_BLOG_ID = "blog_id";
+
     /* Inner class that defines the table contents of the place table */
     public static final class PlacesEntry implements BaseColumns {
 
