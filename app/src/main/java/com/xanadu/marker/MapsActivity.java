@@ -1,25 +1,75 @@
 package com.xanadu.marker;
 
 import android.content.Intent;
+import android.database.ContentObserver;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.app.LoaderManager;
+import android.content.Loader;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.xanadu.marker.data.MarkerContract;
+import com.xanadu.marker.data.PlaceLoader;
 import com.xanadu.marker.data.UpdaterService;
-import com.xanadu.marker.remote.MarkerWfsUtil;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity
+        extends AppCompatActivity
+        implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<Cursor>
+{
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return PlaceLoader.newAllPlacesInstance(this);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        switch (loader.getId()) {
+            case LOADER_ID:
+                loadPlaces(cursor);
+                break;
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+
+    private void loadPlaces(Cursor cursor)
+    {
+        while(cursor != null && cursor.moveToNext()) {
+            String name = cursor.getString(cursor.getColumnIndex(MarkerContract.MARKER_DB_PLACE_NAME));
+
+            LatLng position = new LatLng(
+                    cursor.getDouble(PlaceLoader.Query.COLUMN_COORD_LAT),
+                    cursor.getDouble(PlaceLoader.Query.COLUMN_COORD_LONG));
+            mMap.addMarker(new MarkerOptions()
+                            .position(position)
+                            .title(name));
+                    //.snippet("Population: 4,137,400")));
+                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow)));
+        }
+    }
+
+    private static final String TAG = "MapsActivity";
+    private static final int LOADER_ID = 1;
 
     private GoogleMap mMap;
     private LatLngBounds mLatestBounds;
@@ -37,6 +87,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        getLoaderManager().initLoader(LOADER_ID, null, this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -63,6 +125,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                return true;
             //noinspection SimplifiableIfStatement
             case R.id.action_search:
+                mMap.clear();
+
                 Intent searchIntent = new Intent(this, UpdaterService.class);
                 searchIntent.putExtra(UpdaterService.EXTRA_WFS_QUERY_BOX, mLatestBounds);
                 startService(searchIntent);
@@ -96,4 +160,5 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
     }
+
 }

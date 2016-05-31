@@ -45,8 +45,6 @@ public class UpdaterService extends IntentService {
         super(TAG);
     }
 
-
-
     @Override
     protected void onHandleIntent(Intent intent)
     {
@@ -61,7 +59,9 @@ public class UpdaterService extends IntentService {
                 new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, true));
 
         // Don't even inspect the intent, we only do one thing, and that's fetch content.
-        ArrayList<ContentProviderOperation> cpo = new ArrayList<ContentProviderOperation>();
+
+        // Delete all items
+        getContentResolver().delete(PlacesEntry.CONTENT_URI, null, null);
 
         LatLngBounds box = intent.getParcelableExtra(EXTRA_WFS_QUERY_BOX);
 
@@ -79,8 +79,12 @@ public class UpdaterService extends IntentService {
 
             List<Feature> features = ((FeatureCollection) geoJSON).getFeatures();
 
+            ContentValues[] values = new ContentValues[features.size()];
+
             //Parse and Pass the results to the content provider
-            for (Feature feature : features) {
+            for (int i = 0; i < features.size(); i++) {
+                Feature feature = features.get(i);
+
                 Geometry geom = feature.getGeometry();
 
                 // Only handling multipoints, eventually maybe switch to points
@@ -90,22 +94,23 @@ public class UpdaterService extends IntentService {
 
                 MultiPoint point = (MultiPoint)geom;
                 List<Position> positions = point.getPositions();
-
                 JSONObject properties = feature.getProperties();
-                ContentValues values = new ContentValues();
-                values.put(PlacesEntry.COLUMN_PLACE_ID, properties.getString(MarkerContract.MARKER_DB_PLACE_PLACE_ID));
-                values.put(PlacesEntry.COLUMN_GOO_ID, properties.getString(MarkerContract.MARKER_DB_PLACE_GOO_ID));
-                values.put(PlacesEntry.COLUMN_COORD_LAT, positions.get(0).getLatitude());
-                values.put(PlacesEntry.COLUMN_COORD_LONG, positions.get(0).getLongitude());
-                values.put(PlacesEntry.COLUMN_PLACE_NAME, properties.getString(MarkerContract.MARKER_DB_PLACE_NAME));
-                values.put(PlacesEntry.COLUMN_PLACE_ABOUT, properties.getString(MarkerContract.MARKER_DB_PLACE_ABOUT));
 
-                cpo.add(ContentProviderOperation.newInsert(PlacesEntry.CONTENT_URI).withValues(values).build());
+                ContentValues value = values[i] = new ContentValues();
+
+                value.put(PlacesEntry.COLUMN_PLACE_ID, properties.getString(MarkerContract.MARKER_DB_PLACE_PLACE_ID));
+                value.put(PlacesEntry.COLUMN_GOO_ID, properties.getString(MarkerContract.MARKER_DB_PLACE_GOO_ID));
+                value.put(PlacesEntry.COLUMN_COORD_LAT, positions.get(0).getLatitude());
+                value.put(PlacesEntry.COLUMN_COORD_LONG, positions.get(0).getLongitude());
+                value.put(PlacesEntry.COLUMN_PLACE_NAME, properties.getString(MarkerContract.MARKER_DB_PLACE_NAME));
+                value.put(PlacesEntry.COLUMN_PLACE_ABOUT, properties.getString(MarkerContract.MARKER_DB_PLACE_ABOUT));
+
+                Log.d(TAG, "Inserting record for " + properties.getString(MarkerContract.MARKER_DB_PLACE_NAME));
             }
 
-            getContentResolver().applyBatch(MarkerContract.CONTENT_AUTHORITY, cpo);
+            getContentResolver().bulkInsert(PlacesEntry.CONTENT_URI, values);
 
-        } catch (JSONException | RemoteException | OperationApplicationException e) {
+        } catch (JSONException e) {
             Log.e(TAG, "Error updating content.", e);
         }
 

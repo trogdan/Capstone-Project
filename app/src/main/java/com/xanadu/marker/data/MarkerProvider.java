@@ -25,8 +25,11 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 public class MarkerProvider extends ContentProvider {
+
+    private static final String TAG = "MarkerProvider";
 
     // The URI Matcher used by this content provider.
     private static final UriMatcher sUriMatcher = buildUriMatcher();
@@ -132,21 +135,13 @@ public class MarkerProvider extends ContentProvider {
         return matcher;
     }
 
-    /*
-        Students: We've coded this for you.  We just create a new MarkerDbHelper for later use
-        here.
-     */
     @Override
     public boolean onCreate() {
         mOpenHelper = new MarkerDbHelper(getContext());
+        mOpenHelper.getWritableDatabase().delete(MarkerContract.PlacesEntry.TABLE_NAME, null, null);
         return true;
     }
 
-    /*
-        Students: Here's where you'll code the getType function that uses the UriMatcher.  You can
-        test this by uncommenting testGetType in TestProvider.
-
-     */
     @Override
     public String getType(Uri uri) {
 
@@ -228,13 +223,11 @@ public class MarkerProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;
     }
 
-    /*
-        Student: Add the ability to insert Locations to the implementation of this function.
-     */
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
