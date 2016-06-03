@@ -1,6 +1,5 @@
 package com.xanadu.marker.remote;
 
-import android.graphics.RectF;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,14 +7,10 @@ import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -27,8 +22,7 @@ public class MarkerWfsUtil {
     private static OkHttpClient mHttpClient = new OkHttpClient();
     private static Request.Builder mBuilder = new Request.Builder();
 
-    private MarkerWfsUtil() {
-    }
+    private MarkerWfsUtil() {}
 
     @Nullable
     public static JSONObject fetchMarkerPlacesInBox(LatLngBounds box)

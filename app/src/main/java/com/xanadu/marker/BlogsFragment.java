@@ -1,16 +1,28 @@
 package com.xanadu.marker;
 
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.webkit.URLUtil;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.xanadu.marker.BlogsItemHelper.BlogsItem;
+import com.xanadu.marker.data.BlogLoader;
+import com.xanadu.marker.data.UpdaterService;
 
 /**
  * A fragment representing a list of blogs.
@@ -18,13 +30,19 @@ import com.xanadu.marker.BlogsItemHelper.BlogsItem;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class BlogsFragment extends Fragment {
+public class BlogsFragment
+        extends Fragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    private static final int BLOG_LOADER = 2;
+
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private RecyclerView mRecyclerView;
+    private BlogsItemRecyclerViewAdapter mBlogItemAdapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -50,25 +68,77 @@ public class BlogsFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_blogs, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_blogs, container, false);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+        rootView.findViewById(R.id.add_fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText editText = (EditText)rootView.findViewById(R.id.add_url_edit);
+                if(editText.getVisibility() == View.VISIBLE)
+                {
+                    editText.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    editText.setVisibility(View.VISIBLE);
+                }
+                //startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
+                //        .setType("text/plain")
+                //        .setText("Some sample text")
+                //        .getIntent(), getString(R.string.action_blog_add)));
             }
-            recyclerView.setAdapter(new BlogsItemRecyclerViewAdapter(BlogsItemHelper.ITEMS, mListener));
-        }
-        return view;
+        });
+
+        ((EditText)rootView.findViewById(R.id.add_url_edit)).setOnEditorActionListener(
+                new EditText.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE ||
+                                event.getAction() == KeyEvent.ACTION_DOWN &&
+                                        event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                            if (event == null || !event.isShiftPressed()) {
+                                // the user is done typing.
+                                // first check for valid URI
+                                String uri = v.getText().toString();
+                                if(URLUtil.isValidUrl(uri))
+                                {
+                                    //Send intent to updaterService
+                                    Intent searchIntent = new Intent(getActivity(), UpdaterService.class);
+                                    searchIntent.putExtra(UpdaterService.EXTRA_BLOGGER_BLOGS_UPDATE, uri);
+                                    getActivity().startService(searchIntent);
+                                }
+                                else
+                                {
+                                    //Snackbar to tell user to please, try again
+                                }
+                                return true; // consume.
+                            }
+                        }
+                        return false; // pass on to other listeners.
+                    }
+                });
+
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_blogs);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
+        // Set the mBlogItemAdapter
+        Context context = rootView.getContext();
+        //if (mColumnCount <= 1) {
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        //} else {
+            //TODO
+            //mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+        //}
+        mBlogItemAdapter = new BlogsItemRecyclerViewAdapter(mListener,
+                rootView.findViewById(R.id.recyclerview_blogs_empty));
+        mRecyclerView.setAdapter(mBlogItemAdapter);
+
+        return rootView;
     }
 
 
@@ -87,6 +157,27 @@ public class BlogsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(BLOG_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return BlogLoader.newAllBlogsInstance(getContext());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mBlogItemAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mBlogItemAdapter.swapCursor(null);
     }
 
     /**

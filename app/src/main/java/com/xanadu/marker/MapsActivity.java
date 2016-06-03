@@ -1,19 +1,15 @@
 package com.xanadu.marker;
 
 import android.content.Intent;
-import android.database.ContentObserver;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.LoaderManager;
-import android.content.Loader;
-import android.os.Handler;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -44,7 +40,6 @@ public class MapsActivity
                 loadPlaces(cursor);
                 break;
         }
-
     }
 
     @Override
@@ -88,7 +83,7 @@ public class MapsActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        getLoaderManager().initLoader(LOADER_ID, null, this);
+        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override

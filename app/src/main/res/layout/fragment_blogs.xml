@@ -23,7 +23,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:elevation="0dp"
+                android:elevation="@dimen/appbar_elevation"
                 app:layout_scrollFlags="scroll|enterAlways"
                 android:background="@color/primary_dark">
 
@@ -31,13 +31,35 @@
 
         </android.support.design.widget.AppBarLayout>
 
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/add_url_height"
+            android:layout_marginLeft="@dimen/add_url_side_margin"
+            android:layout_marginStart="@dimen/add_url_side_margin"
+            android:layout_marginRight="@dimen/add_url_side_margin"
+            android:layout_marginEnd="@dimen/add_url_side_margin"
+            android:layout_marginTop="@dimen/add_url_top_margin"
+            android:id="@+id/add_url_edit"
+            android:layout_gravity="center_horizontal|top"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:elevation="4dp"
+            android:visibility="invisible"
+            android:inputType="textUri"
+            android:hint="http://"
+            android:background="#ffffff"
+            android:paddingLeft="@dimen/add_url_padding"
+            android:paddingRight="@dimen/add_url_padding"
+            android:singleLine="true"/>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_blogs"
+            android:clipToPadding="false"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:listitem="@layout/list_item_blogs" />
+            tools:listitem="@layout/list_item_blogs"
+            android:divider="@drawable/listview_border"
+            android:dividerHeight="1px"/>
 
         <!-- empty list -->
         <TextView
@@ -53,9 +75,25 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingStart="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/empty_blogs_list" />
+            android:text="@string/empty_blogs_list"
+            android:visibility="invisible" />
 
     </android.support.design.widget.CoordinatorLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_fab"
+        app:backgroundTint="@color/accent"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:layout_width="@dimen/fab_size"
+        android:layout_height="@dimen/fab_size"
+        android:src="@drawable/ic_add_black"
+        android:elevation="@dimen/fab_elevation"
+        app:pressedTranslationZ="@dimen/fab_press_translation_z"
+        android:contentDescription="@string/action_blog_add" />
+
 
 </FrameLayout>
 

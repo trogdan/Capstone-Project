@@ -1,11 +1,9 @@
 package com.xanadu.marker.data;
 
 import android.content.Context;
-import android.content.CursorLoader;
-import android.database.Cursor;
 import android.net.Uri;
+import android.support.v4.content.CursorLoader;
 
-import com.google.android.gms.maps.model.Marker;
 import com.xanadu.marker.data.MarkerContract.PlacesEntry;
 
 /**
@@ -28,8 +26,8 @@ public class PlaceLoader extends CursorLoader {
         String[] PROJECTION = {
                 PlacesEntry._ID,
                 PlacesEntry.COLUMN_PLACE_ID,
-                PlacesEntry.COLUMN_PLACE_NAME,
-                PlacesEntry.COLUMN_PLACE_ABOUT,
+                PlacesEntry.COLUMN_NAME,
+                PlacesEntry.COLUMN_ABOUT,
                 PlacesEntry.COLUMN_COORD_LAT,
                 PlacesEntry.COLUMN_COORD_LONG,
                 PlacesEntry.COLUMN_GOO_ID

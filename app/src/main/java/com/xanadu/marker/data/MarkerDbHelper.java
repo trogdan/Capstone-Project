@@ -29,7 +29,7 @@ import com.xanadu.marker.data.MarkerContract.PostsEntry;
 public class MarkerDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 1;
 
     static final String DATABASE_NAME = "marker.db";
 
@@ -44,22 +44,23 @@ public class MarkerDbHelper extends SQLiteOpenHelper {
                 PlacesEntry._ID + " INTEGER PRIMARY KEY," +
                 PlacesEntry.COLUMN_PLACE_ID + " TEXT UNIQUE ON CONFLICT REPLACE NOT NULL, " +
                 PlacesEntry.COLUMN_GOO_ID + " TEXT UNIQUE ON CONFLICT REPLACE NOT NULL, " +
-                PlacesEntry.COLUMN_PLACE_NAME + " TEXT NOT NULL, " +
-                PlacesEntry.COLUMN_PLACE_ABOUT + " TEXT, " +
+                PlacesEntry.COLUMN_NAME + " TEXT NOT NULL, " +
+                PlacesEntry.COLUMN_ABOUT + " TEXT, " +
                 PlacesEntry.COLUMN_COORD_LAT + " REAL NOT NULL, " +
                 PlacesEntry.COLUMN_COORD_LONG + " REAL NOT NULL " +
                 " );";
         final String SQL_CREATE_BLOGS_TABLE = "CREATE TABLE " + BlogsEntry.TABLE_NAME + " (" +
                 BlogsEntry._ID + " INTEGER PRIMARY KEY," +
-                BlogsEntry.COLUMN_BLOG_ID + " TEXT UNIQUE ON CONFLICT REPLACE NOT NULL, " +
+                BlogsEntry.COLUMN_BLOG_ID + " TEXT UNIQUE ON CONFLICT REPLACE, " +
                 BlogsEntry.COLUMN_SERVICE_BLOG_ID + " TEXT NOT NULL, " +
-                BlogsEntry.COLUMN_PLACE_NAME + " TEXT NOT NULL, " +
-                BlogsEntry.COLUMN_PLACE_DESC + " TEXT, " +
-                BlogsEntry.COLUMN_IMAGE_URI + " TEXT " +
+                BlogsEntry.COLUMN_NAME + " TEXT NOT NULL, " +
+                BlogsEntry.COLUMN_DESC + " TEXT, " +
+                BlogsEntry.COLUMN_IMAGE_URI + " TEXT, " +
+                BlogsEntry.COLUMN_URL + " TEXT UNIQUE NOT NULL" +
                 " );";
         final String SQL_CREATE_POSTS_TABLE = "CREATE TABLE " + PostsEntry.TABLE_NAME + " (" +
                 PostsEntry._ID + " INTEGER PRIMARY KEY," +
-                PostsEntry.COLUMN_POST_ID + " TEXT UNIQUE ON CONFLICT REPLACE NOT NULL, " +
+                PostsEntry.COLUMN_POST_ID + " TEXT UNIQUE ON CONFLICT REPLACE, " +
                 PostsEntry.COLUMN_BLOG_KEY + " INTEGER NOT NULL, " +
                 PostsEntry.COLUMN_PLACE_KEY + " INTEGER NOT NULL, " +
                 PostsEntry.COLUMN_SERVICE_POST_ID + " TEXT NOT NULL, " +

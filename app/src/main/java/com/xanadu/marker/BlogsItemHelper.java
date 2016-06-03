@@ -23,7 +23,7 @@ public class BlogsItemHelper {
      */
     public static final Map<String, BlogsItem> ITEM_MAP = new HashMap<String, BlogsItem>();
 
-    private static final int COUNT = 25;
+    private static final int COUNT = 30;
 
     static {
         // Add some sample items.

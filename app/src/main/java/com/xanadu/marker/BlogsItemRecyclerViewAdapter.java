@@ -1,5 +1,6 @@
 package com.xanadu.marker;
 
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,36 +9,39 @@ import android.widget.TextView;
 
 import com.xanadu.marker.BlogsFragment.OnListFragmentInteractionListener;
 import com.xanadu.marker.BlogsItemHelper.BlogsItem;
+import com.xanadu.marker.data.BlogLoader;
 
 import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link BlogsItem} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
 public class BlogsItemRecyclerViewAdapter extends RecyclerView.Adapter<BlogsItemRecyclerViewAdapter.ViewHolder> {
 
-    private final List<BlogsItem> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private Cursor mCursor;
+    private View mEmptyView;
 
-    public BlogsItemRecyclerViewAdapter(List<BlogsItem> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
+    public BlogsItemRecyclerViewAdapter(OnListFragmentInteractionListener listener, View emptyView) {
         mListener = listener;
+        mEmptyView = emptyView;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_blogs, parent, false);
+                .inflate(R.layout.list_item_blogs, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        if (mCursor == null ) return;
+        mCursor.moveToPosition(position);
+
+        holder.mIdView.setText(mCursor.getString(BlogLoader.Query.COLUMN_NAME));
+        holder.mContentView.setText(mCursor.getString(BlogLoader.Query.COLUMN_URL));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,7 +49,7 @@ public class BlogsItemRecyclerViewAdapter extends RecyclerView.Adapter<BlogsItem
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    // TODO mListener.onListFragmentInteraction(holder.mItem);
                 }
             }
         });
@@ -53,14 +57,14 @@ public class BlogsItemRecyclerViewAdapter extends RecyclerView.Adapter<BlogsItem
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        if ( null == mCursor ) return 0;
+        return mCursor.getCount();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public BlogsItem mItem;
 
         public ViewHolder(View view) {
             super(view);
@@ -73,5 +77,15 @@ public class BlogsItemRecyclerViewAdapter extends RecyclerView.Adapter<BlogsItem
         public String toString() {
             return super.toString() + " '" + mContentView.getText() + "'";
         }
+    }
+
+    public void swapCursor(Cursor newCursor) {
+        mCursor = newCursor;
+        notifyDataSetChanged();
+        mEmptyView.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
+    }
+
+    public Cursor getCursor() {
+        return mCursor;
     }
 }

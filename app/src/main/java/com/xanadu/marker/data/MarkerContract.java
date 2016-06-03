@@ -24,7 +24,7 @@ import android.support.annotation.Nullable;
 import java.util.List;
 
 /**
- * Defines table and column names for the weather database.
+ * Defines table and column names for the marker database.
  */
 public class MarkerContract {
 
@@ -73,10 +73,10 @@ public class MarkerContract {
         public static final String COLUMN_GOO_ID = "goo_id";
 
         // Human readable location string
-        public static final String COLUMN_PLACE_NAME = "name";
+        public static final String COLUMN_NAME = "name";
 
         // Human readable description
-        public static final String COLUMN_PLACE_ABOUT = "about";
+        public static final String COLUMN_ABOUT = "about";
 
         // In order to uniquely pinpoint the location on the map when we launch the
         // map intent, we store the latitude and longitude as returned by marker.
@@ -111,50 +111,17 @@ public class MarkerContract {
         public static final String COLUMN_IMAGE_URI = "image_uri";
 
         // Human readable description
-        public static final String COLUMN_PLACE_NAME = "name";
+        public static final String COLUMN_NAME = "name";
 
         // Human readable description
-        public static final String COLUMN_PLACE_DESC = "desc";
+        public static final String COLUMN_DESC = "desc";
 
+
+        public static final String COLUMN_URL = "url";
 
         public static Uri buildBlogsUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
-
-//        /*
-//            Student: This is the buildWeatherLocation function you filled in.
-//         */
-//        public static Uri buildWeatherLocation(String locationSetting) {
-//            return CONTENT_URI.buildUpon().appendPath(locationSetting).build();
-//        }
-
-//        public static Uri buildWeatherLocationWithStartDate(
-//                String locationSetting, long startDate) {
-//            long normalizedDate = normalizeDate(startDate);
-//            return CONTENT_URI.buildUpon().appendPath(locationSetting)
-//                    .appendQueryParameter(COLUMN_DATE, Long.toString(normalizedDate)).build();
-//        }
-//
-//        public static Uri buildWeatherLocationWithDate(String locationSetting, long date) {
-//            return CONTENT_URI.buildUpon().appendPath(locationSetting)
-//                    .appendPath(Long.toString(normalizeDate(date))).build();
-//        }
-//
-//        public static String getLocationSettingFromUri(Uri uri) {
-//            return uri.getPathSegments().get(1);
-//        }
-//
-//        public static long getDateFromUri(Uri uri) {
-//            return Long.parseLong(uri.getPathSegments().get(2));
-//        }
-//
-//        public static long getStartDateFromUri(Uri uri) {
-//            String dateString = uri.getQueryParameter(COLUMN_DATE);
-//            if (null != dateString && dateString.length() > 0)
-//                return Long.parseLong(dateString);
-//            else
-//                return 0;
-//        }
     }
 
     /* Inner class that defines the table contents of the posts table */
