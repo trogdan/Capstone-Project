@@ -116,6 +116,8 @@ public class MarkerContract {
         // Human readable description
         public static final String COLUMN_DESC = "desc";
 
+        // Date, stored as long in milliseconds since the epoch
+        public static final String COLUMN_LAST_UPDATED = "last_updated";
 
         public static final String COLUMN_URL = "url";
 
@@ -153,6 +155,11 @@ public class MarkerContract {
 
         // Human readable description
         public static final String COLUMN_TITLE = "title";
+
+        // Date, stored as long in milliseconds since the epoch
+        public static final String COLUMN_PUBLISHED = "published";
+
+        public static final String COLUMN_URL = "url";
 
         public static Uri buildPostsUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);

@@ -1,4 +1,4 @@
-package com.xanadu.marker;
+package com.xanadu.marker.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;

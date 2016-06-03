@@ -18,7 +18,7 @@ public class BlogLoader extends CursorLoader {
     public static BlogLoader newInstanceForItemId(Context context, long itemId) {
         return new BlogLoader(context, MarkerContract.BlogsEntry.buildBlogsUri(itemId));
     }
-
+    
     private BlogLoader(Context context, Uri uri) {
         super(context, uri, Query.PROJECTION, null, null, null);
     }

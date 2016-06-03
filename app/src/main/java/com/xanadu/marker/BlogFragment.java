@@ -15,16 +15,16 @@ import com.paginate.Paginate;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PostsFragment.OnFragmentInteractionListener} interface
+ * {@link BlogFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link PostsFragment#newInstance} factory method to
+ * Use the {@link BlogFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PostsFragment
+public class BlogFragment
         extends Fragment
         implements Paginate.Callbacks
 {
-    private static final String TAG = "PostsFragment";
+    private static final String TAG = "BlogFragment";
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -37,7 +37,7 @@ public class PostsFragment
 
     private OnFragmentInteractionListener mListener;
 
-    public PostsFragment() {
+    public BlogFragment() {
         // Required empty public constructor
     }
 
@@ -47,11 +47,11 @@ public class PostsFragment
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment PostsFragment.
+     * @return A new instance of fragment BlogFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PostsFragment newInstance(String param1, String param2) {
-        PostsFragment fragment = new PostsFragment();
+    public static BlogFragment newInstance(String param1, String param2) {
+        BlogFragment fragment = new BlogFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -74,7 +74,7 @@ public class PostsFragment
         // Inflate the layout for this fragment
         setupPagination();
 
-        return inflater.inflate(R.layout.fragment_posts, container, false);
+        return inflater.inflate(R.layout.fragment_blog, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

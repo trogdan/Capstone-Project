@@ -56,7 +56,8 @@ public class MarkerDbHelper extends SQLiteOpenHelper {
                 BlogsEntry.COLUMN_NAME + " TEXT NOT NULL, " +
                 BlogsEntry.COLUMN_DESC + " TEXT, " +
                 BlogsEntry.COLUMN_IMAGE_URI + " TEXT, " +
-                BlogsEntry.COLUMN_URL + " TEXT UNIQUE NOT NULL" +
+                BlogsEntry.COLUMN_URL + " TEXT UNIQUE NOT NULL," +
+                BlogsEntry.COLUMN_LAST_UPDATED + " INTEGER NOT NULL" +
                 " );";
         final String SQL_CREATE_POSTS_TABLE = "CREATE TABLE " + PostsEntry.TABLE_NAME + " (" +
                 PostsEntry._ID + " INTEGER PRIMARY KEY," +
@@ -65,7 +66,9 @@ public class MarkerDbHelper extends SQLiteOpenHelper {
                 PostsEntry.COLUMN_PLACE_KEY + " INTEGER NOT NULL, " +
                 PostsEntry.COLUMN_SERVICE_POST_ID + " TEXT NOT NULL, " +
                 PostsEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
-                PostsEntry.COLUMN_IMAGE_URI + " TEXT " +
+                PostsEntry.COLUMN_IMAGE_URI + " TEXT, " +
+                PostsEntry.COLUMN_URL + " TEXT UNIQUE NOT NULL, " +
+                PostsEntry.COLUMN_PUBLISHED + " INTEGER NOT NULL" +
                 " );";
 
         sqLiteDatabase.execSQL(SQL_CREATE_PLACES_TABLE);

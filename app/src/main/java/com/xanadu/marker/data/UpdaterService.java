@@ -123,7 +123,7 @@ public class UpdaterService extends IntentService {
                 value.put(BlogsEntry.COLUMN_SERVICE_BLOG_ID, blog.getId());
                 value.put(BlogsEntry.COLUMN_URL, blog.getUrl());
                 value.put(BlogsEntry.COLUMN_NAME, blog.getName());
-
+                value.put(BlogsEntry.COLUMN_LAST_UPDATED, blog.getUpdated().getValue());
                 getContentResolver().insert(BlogsEntry.CONTENT_URI, value);
             }
             else

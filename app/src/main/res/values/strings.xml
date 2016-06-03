@@ -28,7 +28,4 @@
     <string name="empty_blogs_list_server_error">No blog information available. The server is not returning valid data. Please check for an updated version of Marker.</string>
     <string name="empty_blogs_list_invalid_location">No blog information available. The location in settings is not recognized by the blog server.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
 </resources>
