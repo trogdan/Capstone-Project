@@ -6,6 +6,7 @@
     <string name="title_activity_maps">Explore</string>
     <string name="title_activity_blogs">Favorite Blogs</string>
     <string name="title_fragment_blog">Blog Posts</string>
+    <string name="title_activity_post">Web View</string>
 
     <string-array name="activity_navigation_array">
         <item>Maps</item>
@@ -28,6 +29,7 @@
     <string name="empty_blogs_list_server_down">No blog information available. The server is not returning data.</string>
     <string name="empty_blogs_list_server_error">No blog information available. The server is not returning valid data. Please check for an updated version of Marker.</string>
     <string name="empty_blogs_list_invalid_location">No blog information available. The location in settings is not recognized by the blog server.</string>
+
 
 
 </resources>

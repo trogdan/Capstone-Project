@@ -168,6 +168,10 @@ public class MarkerContract {
 
         public static final String COLUMN_URL = "url";
 
+        // For now, save the HTML content of a viewed post, but in future,
+        // we would set a quota
+        public static final String COLUMN_CONTENT = "content";
+
         public static Uri buildPostsUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
@@ -194,6 +198,15 @@ public class MarkerContract {
             List<String> segments = uri.getPathSegments();
             if (segments != null && segments.get(1).equals(PATH_BLOG))
                 return segments.get(2);
+            else
+                return null;
+        }
+
+        @Nullable
+        public static String getPostFromUri(Uri uri) {
+            List<String> segments = uri.getPathSegments();
+            if (segments != null && segments.get(0).equals(PATH_POSTS))
+                return segments.get(1);
             else
                 return null;
         }

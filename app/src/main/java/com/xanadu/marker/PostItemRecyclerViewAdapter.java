@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.xanadu.marker.BlogFragment.OnListFragmentInteractionListener;
+import com.xanadu.marker.data.BlogItem;
 import com.xanadu.marker.data.BlogLoader;
 import com.xanadu.marker.data.PostItem;
 import com.xanadu.marker.data.PostLoader;
@@ -24,10 +25,12 @@ public class PostItemRecyclerViewAdapter extends RecyclerView.Adapter<PostItemRe
     private final OnListFragmentInteractionListener mListener;
     private Cursor mCursor;
     private View mEmptyView;
+    private BlogItem mBlogItem;
 
-    public PostItemRecyclerViewAdapter(OnListFragmentInteractionListener listener, View emptyView) {
+    public PostItemRecyclerViewAdapter(OnListFragmentInteractionListener listener, View emptyView, BlogItem blogItem) {
         mListener = listener;
         mEmptyView = emptyView;
+        mBlogItem = blogItem;
     }
 
     @Override
@@ -45,15 +48,17 @@ public class PostItemRecyclerViewAdapter extends RecyclerView.Adapter<PostItemRe
         holder.mIdView.setText(mCursor.getString(PostLoader.COLUMN_TITLE));
         holder.mContentView.setText(mCursor.getString(PostLoader.COLUMN_PUBLISHED));
 
-        Log.d(TAG, "Title: " + mCursor.getString(PostLoader.COLUMN_TITLE));
-        Log.d(TAG, "Date: " + mCursor.getString(PostLoader.COLUMN_PUBLISHED));
+        //Log.d(TAG, "Title: " + mCursor.getString(PostLoader.COLUMN_TITLE));
+        //Log.d(TAG, "Date: " + mCursor.getString(PostLoader.COLUMN_TITLE));
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mCursor.moveToPosition(holder.getAdapterPosition());
                 if (null != mListener && mCursor != null) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(new PostItem(mCursor));
+                    mListener.onListFragmentInteraction(new PostItem(mCursor, mBlogItem));
                 }
             }
         });

@@ -71,7 +71,8 @@ public class MarkerDbHelper extends SQLiteOpenHelper {
                 PostsEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
                 PostsEntry.COLUMN_IMAGE_URI + " TEXT, " +
                 PostsEntry.COLUMN_URL + " TEXT UNIQUE NOT NULL, " +
-                PostsEntry.COLUMN_PUBLISHED + " INTEGER NOT NULL " +
+                PostsEntry.COLUMN_PUBLISHED + " INTEGER NOT NULL, " +
+                PostsEntry.COLUMN_CONTENT + " TEXT " +
                 " );";
 
         sqLiteDatabase.execSQL(SQL_CREATE_PLACES_TABLE);

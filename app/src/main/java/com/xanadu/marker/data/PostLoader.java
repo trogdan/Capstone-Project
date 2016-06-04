@@ -18,6 +18,7 @@ public class PostLoader extends CursorLoader {
     public static final int COLUMN_IMAGE_URI = 4;
     public static final int COLUMN_SERVICE_POST_ID = 5;
     public static final int COLUMN_URL = 6;
+    public static final int COLUMN_CONTENT = 7;
 
     public static PostLoader newAllPostsInstance(Context context) {
         return new PostLoader(context, PostsEntry.CONTENT_URI);
@@ -39,7 +40,8 @@ public class PostLoader extends CursorLoader {
                 PostsEntry.COLUMN_PUBLISHED,
                 PostsEntry.COLUMN_IMAGE_URI,
                 PostsEntry.COLUMN_SERVICE_POST_ID,
-                PostsEntry.COLUMN_URL
+                PostsEntry.COLUMN_URL,
+                PostsEntry.COLUMN_CONTENT
         };
 
     }

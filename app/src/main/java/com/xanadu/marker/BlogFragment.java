@@ -94,7 +94,7 @@ public class BlogFragment
 
         CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) rootView.findViewById(R.id.blog_collapsing_toolbar);
-        collapsingToolbar.setTitle("Title");
+        collapsingToolbar.setTitle(rootView.getResources().getString(R.string.title_fragment_blog));
         collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
 //        ImageView imageView = (ImageView) rootView.findViewById(R.id.blog_photo);
@@ -117,7 +117,7 @@ public class BlogFragment
         //mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         //}
         mPostItemAdapter = new PostItemRecyclerViewAdapter(mListener,
-                rootView.findViewById(R.id.recyclerview_blog_empty));
+                rootView.findViewById(R.id.recyclerview_blog_empty), mBlogItem);
         mRecyclerView.setAdapter(mPostItemAdapter);
 
         setupPagination();

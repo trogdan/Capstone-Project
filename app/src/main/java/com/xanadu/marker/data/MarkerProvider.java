@@ -40,6 +40,7 @@ public class MarkerProvider extends ContentProvider {
     static final int POSTS = 300;
     static final int POSTS_WITH_PLACE= 301;
     static final int POSTS_WITH_BLOG= 302;
+    static final int POSTS_WITH_POST= 303;
 
     private static final SQLiteQueryBuilder sPostsByPlaceQueryBuilder;
     private static final SQLiteQueryBuilder sPostsByBlogQueryBuilder;
@@ -68,6 +69,7 @@ public class MarkerProvider extends ContentProvider {
                         "." + MarkerContract.PostsEntry.COLUMN_BLOG_KEY +
                         " = " + MarkerContract.BlogsEntry.TABLE_NAME +
                         "." + MarkerContract.BlogsEntry._ID);
+
     }
 
     //places.place_id = ?
@@ -79,6 +81,11 @@ public class MarkerProvider extends ContentProvider {
     private static final String sBlogSelection =
             MarkerContract.BlogsEntry.TABLE_NAME+
                     "." + MarkerContract.BlogsEntry.COLUMN_BLOG_ID + " = ? ";
+
+    //posts._id = ?
+    private static final String sPostsIdSelection =
+            MarkerContract.PostsEntry.TABLE_NAME+
+                    "." + MarkerContract.PostsEntry._ID + " = ? ";
 
     private Cursor getPostsByPlace(Uri uri, String[] projection, String sortOrder) {
         String placeFromUri = MarkerContract.PostsEntry.getPlaceFromUri(uri);
@@ -111,7 +118,22 @@ public class MarkerProvider extends ContentProvider {
                 sortOrder
         );
     }
+    private Cursor getPostsByPost(Uri uri, String[] projection, String sortOrder) {
+        String postFromUri = MarkerContract.PostsEntry.getPostFromUri(uri);
 
+        String[] selectionArgs = new String[]{postFromUri};
+        String selection = sPostsIdSelection;
+
+        return mOpenHelper.getReadableDatabase().query(
+                MarkerContract.PostsEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
 
     static UriMatcher buildUriMatcher() {
         // I know what you're thinking.  Why create a UriMatcher when you can use regular
@@ -127,6 +149,8 @@ public class MarkerProvider extends ContentProvider {
         matcher.addURI(authority, MarkerContract.PATH_PLACES, PLACES);
         matcher.addURI(authority, MarkerContract.PATH_BLOGS, BLOGS);
         matcher.addURI(authority, MarkerContract.PATH_POSTS, POSTS);
+        matcher.addURI(authority, MarkerContract.PATH_POSTS + "/*",
+                POSTS_WITH_POST);
         matcher.addURI(authority, MarkerContract.PATH_POSTS + "/" +
                 MarkerContract.PATH_PLACE + "/*", POSTS_WITH_PLACE);
         matcher.addURI(authority, MarkerContract.PATH_POSTS + "/" +
@@ -152,6 +176,8 @@ public class MarkerProvider extends ContentProvider {
             case POSTS_WITH_PLACE:
                 return MarkerContract.PostsEntry.CONTENT_TYPE;
             case POSTS_WITH_BLOG:
+                return MarkerContract.PostsEntry.CONTENT_TYPE;
+            case POSTS_WITH_POST:
                 return MarkerContract.PostsEntry.CONTENT_TYPE;
             case PLACES:
                 return MarkerContract.PlacesEntry.CONTENT_TYPE;
@@ -179,6 +205,11 @@ public class MarkerProvider extends ContentProvider {
             // "posts/blog/*"
             case POSTS_WITH_BLOG: {
                 retCursor = getPostsByBlog(uri, projection, sortOrder);
+                break;
+            }
+            // "posts/*"
+            case POSTS_WITH_POST: {
+                retCursor = getPostsByPost(uri, projection, sortOrder);
                 break;
             }
             // "places"

@@ -10,6 +10,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.blogger.Blogger;
 
 import com.google.api.services.blogger.model.Blog;
+import com.google.api.services.blogger.model.Post;
 import com.google.api.services.blogger.model.PostList;
 
 import java.io.IOException;
@@ -73,4 +74,21 @@ public class BloggerApiUtil {
         return null;
     }
 
+    public static Post fetchPost(String blogId, String postId)
+    {
+        try {
+            Blogger.Posts.Get getter = posts.get(blogId, postId);
+            getter.setKey("AIzaSyAKhkqh332VCZRqOGxkXeCfQwDj5rZGCfY");
+            getter.setFetchImages(true);
+            getter.setFetchBody(true);
+
+            // Restrict the result content to just the data we need.
+            return getter.execute();
+        } catch(IOException e)
+        {
+            Log.e(TAG, "Exception fetching blog", e);
+        }
+
+        return null;
+    }
 }

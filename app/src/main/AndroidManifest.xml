@@ -49,6 +49,7 @@
             android:name=".BlogActivity"
             android:label="@string/title_fragment_blog"
             android:parentActivityName=".BlogsActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -65,7 +66,15 @@
             android:name=".data.UpdaterService"
             android:exported="false" />
 
-
+        <activity
+            android:name=".PostActivity"
+            android:label="@string/title_activity_post"
+            android:parentActivityName=".BlogActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.xanadu.marker.BlogActivity" />
+        </activity>
     </application>
 
 </manifest>

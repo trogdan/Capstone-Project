@@ -15,32 +15,24 @@ public class PostItem implements Parcelable {
     public String image_uri;
     public String post_id;
     public String service_post_id;
-
-    // Constructor
-    public PostItem(
-            String title,
-            String uri,
-            String image_uri,
-            String post_id,
-            String service_post_id){
-        this.title = title;
-        this.uri = uri;
-        this.image_uri = image_uri;
-        this.post_id = post_id;
-        this.service_post_id = service_post_id;
-    }
+    public int _id;
+    public BlogItem blogItem;
 
     // Cursor assumed to be on this item
-    public PostItem(Cursor cursor){
+    public PostItem(Cursor cursor, BlogItem blogItem){
         this.title = cursor.getString(PostLoader.COLUMN_TITLE);
         this.uri = cursor.getString(PostLoader.COLUMN_URL);
         this.image_uri = cursor.getString(PostLoader.COLUMN_IMAGE_URI);
         this.post_id = cursor.getString(PostLoader.COLUMN_POST_ID);
         this.service_post_id = cursor.getString(PostLoader.COLUMN_SERVICE_POST_ID);
+        this._id = cursor.getInt(PostLoader._ID);
+        this.blogItem = blogItem;
     }
 
     // Parcelling part
     public PostItem(Parcel in){
+        this.blogItem = in.readParcelable(BlogItem.class.getClassLoader());
+
         String[] data = new String[5];
 
         in.readStringArray(data);
@@ -50,6 +42,8 @@ public class PostItem implements Parcelable {
         this.image_uri = data[2];
         this.post_id = data[3];
         this.service_post_id = data[4];
+
+        this._id = in.readInt();
     }
 
     public int describeContents(){
@@ -58,6 +52,7 @@ public class PostItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.blogItem, flags);
         dest.writeStringArray(new String[] {
                 this.title,
                 this.uri,
@@ -65,6 +60,7 @@ public class PostItem implements Parcelable {
                 this.post_id,
                 this.service_post_id
         });
+        dest.writeInt(_id);
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {

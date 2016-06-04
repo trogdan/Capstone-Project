@@ -47,6 +47,9 @@ public class UpdaterService extends IntentService {
     public static final String EXTRA_BLOGGER_BLOG_UPDATE
             = "com.xanadu.marker.intent.extra.BLOGGER_BLOG_UPDATE";
 
+    public static final String EXTRA_BLOGGER_POST_UPDATE
+            = "com.xanadu.marker.intent.extra.BLOGGER_POST_UPDATE";
+
 
     public UpdaterService() {
         super(TAG);
@@ -234,6 +237,40 @@ public class UpdaterService extends IntentService {
                             value,
                             BlogsEntry._ID + " = ?",
                             new String[]{Integer.toString(blogItem._id)});
+                }
+            }
+        }
+        else if (intent.hasExtra(EXTRA_BLOGGER_POST_UPDATE))
+        {
+            PostItem postItem = intent.getParcelableExtra(EXTRA_BLOGGER_POST_UPDATE);
+
+            if (postItem != null) {
+                // See if we already have content for this _id;
+                Cursor postCursor = getContentResolver().query(
+                        MarkerContract.PostsEntry.CONTENT_URI,
+                        new String[] { PostsEntry.COLUMN_CONTENT },
+                        MarkerContract.BlogsEntry._ID + " = ?",
+                        new String[]{Integer.toString(postItem._id)},
+                        null);
+
+                if (postCursor.getCount() == 1)
+                {
+                    postCursor.moveToNext();
+                    if (postCursor.getString(0) == null) {
+                        //Download and Update
+                        Post post = BloggerApiUtil.fetchPost(postItem.blogItem.service_blog_id, postItem.service_post_id);
+
+                        if (post != null) {
+                            ContentValues value = new ContentValues();
+                            value.put(PostsEntry.COLUMN_CONTENT, post.getContent());
+
+                            // TODO replace this with _ID specific URI
+                            getContentResolver().update(PostsEntry.CONTENT_URI,
+                                    value,
+                                    PostsEntry._ID + " = ?",
+                                    new String[]{Integer.toString(postItem._id)});
+                        }
+                    }
                 }
             }
         }
