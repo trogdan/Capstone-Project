@@ -8,11 +8,13 @@ import android.os.Parcelable;
  * Created by dan on 6/3/16.
  */
 public class BlogItem implements Parcelable {
-    private String name;
-    private String uri;
-    private String image_uri;
-    private String blog_id;
-    private String service_blog_id;
+    public static final String EXTRA_BLOG_ITEM = "extra_posts_item";
+
+    public String name;
+    public String uri;
+    public String image_uri;
+    public String blog_id;
+    public String service_blog_id;
 
     // Constructor
     public BlogItem(

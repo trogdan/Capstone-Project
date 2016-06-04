@@ -41,7 +41,7 @@ public class BlogsFragment
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
-    private BlogsItemRecyclerViewAdapter mBlogItemAdapter;
+    private BlogItemRecyclerViewAdapter mBlogItemAdapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -133,7 +133,7 @@ public class BlogsFragment
             //TODO
             //mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         //}
-        mBlogItemAdapter = new BlogsItemRecyclerViewAdapter(mListener,
+        mBlogItemAdapter = new BlogItemRecyclerViewAdapter(mListener,
                 rootView.findViewById(R.id.recyclerview_blogs_empty));
         mRecyclerView.setAdapter(mBlogItemAdapter);
 

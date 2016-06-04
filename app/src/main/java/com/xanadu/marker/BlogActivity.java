@@ -1,6 +1,5 @@
 package com.xanadu.marker;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,9 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.xanadu.marker.data.BlogItem;
 
-public class BlogActivity extends AppCompatActivity implements BlogFragment.OnFragmentInteractionListener{
+public class BlogActivity extends AppCompatActivity implements BlogFragment.OnListFragmentInteractionListener {
 
-    public static final String EXTRA_BLOG_ITEM = "extra_blog_item";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,7 +19,7 @@ public class BlogActivity extends AppCompatActivity implements BlogFragment.OnFr
             // Create the blog fragment and add it to the activity
             // using a fragment transaction.
 
-            BlogFragment fragment = BlogFragment.newInstance((BlogItem)getIntent().getParcelableExtra(EXTRA_BLOG_ITEM));
+            BlogFragment fragment = BlogFragment.newInstance((BlogItem)getIntent().getParcelableExtra(BlogItem.EXTRA_BLOG_ITEM));
 
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.blog_container, fragment)

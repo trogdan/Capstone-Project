@@ -10,6 +10,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.blogger.Blogger;
 
 import com.google.api.services.blogger.model.Blog;
+import com.google.api.services.blogger.model.PostList;
 
 import java.io.IOException;
 
@@ -33,7 +34,6 @@ public class BloggerApiUtil {
     private BloggerApiUtil() {}
 
     public static Blog fetchBlog(String blogUrl) {
-
         try {
             Blogger.Blogs.GetByUrl getter = blogs.getByUrl(blogUrl);
             getter.setKey("AIzaSyAKhkqh332VCZRqOGxkXeCfQwDj5rZGCfY");
@@ -48,21 +48,27 @@ public class BloggerApiUtil {
         return null;
     }
 
-    public static void fetchPosts(Blog blog) {
-
+    public static PostList fetchPosts(String blogId, Long maxResults, String nextPageToken)
+    {
         try {
+            Blogger.Posts.List lister = posts.list(blogId);
 
-            Blogger.Posts.List lister = posts.list(blog.getId());
-            //Blogger.Blogs.GetByUrl getter = blogs.getByUrl(blogUrl);
-            //getter.setKey("AIzaSyAKhkqh332VCZRqOGxkXeCfQwDj5rZGCfY");
-            //Blog blog = getter.execute();
-            //return blog;
-            //Log.d(TAG, "Blog title: " + blog.getName());
+            if (nextPageToken != null)
+            {
+                lister.setPageToken(nextPageToken);
+            }
+
+            // Restrict the result content to just the data we need.
+            lister.setFields("items(author/displayName,published,title,url),nextPageToken");
+            lister.setMaxResults(maxResults);
+
+            return lister.execute();
         } catch(IOException e)
         {
             Log.e(TAG, "Exception fetching blog", e);
         }
 
-        //return null;
+        return null;
     }
+
 }

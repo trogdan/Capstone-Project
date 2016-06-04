@@ -116,10 +116,14 @@ public class MarkerContract {
         // Human readable description
         public static final String COLUMN_DESC = "desc";
 
-        // Date, stored as long in milliseconds since the epoch
+        // Date, stored as long in milliseconds since the epoch. previous is used to
+        // determine if the posts for a blog needs to be updated
         public static final String COLUMN_LAST_UPDATED = "last_updated";
+        public static final String COLUMN_PREV_LAST_UPDATED = "prev_last_updated";
 
         public static final String COLUMN_URL = "url";
+
+        public static final String COLUMN_POST_COUNT = "post_count";
 
         public static Uri buildBlogsUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);

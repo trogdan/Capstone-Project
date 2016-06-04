@@ -1,9 +1,12 @@
 package com.xanadu.marker;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +14,15 @@ import android.view.ViewGroup;
 
 import com.paginate.Paginate;
 import com.xanadu.marker.data.BlogItem;
+import com.xanadu.marker.data.PostItem;
+import com.xanadu.marker.data.UpdaterService;
+import com.xanadu.marker.ui.DividerItemDecoration;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link BlogFragment.OnFragmentInteractionListener} interface
+ * {@link OnListFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link BlogFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -31,7 +37,9 @@ public class BlogFragment
 
     private BlogItem mBlogItem;
 
-    private OnFragmentInteractionListener mListener;
+    private OnListFragmentInteractionListener mListener;
+    private RecyclerView mRecyclerView;
+    private PostItemRecyclerViewAdapter mPostItemAdapter;
 
     public BlogFragment() {
         // Required empty public constructor
@@ -57,26 +65,43 @@ public class BlogFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.fragment_blog, container, false);
+
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_blog);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
+        // Set the mPostItemAdapter
+        Context context = rootView.getContext();
+        //if (mColumnCount <= 1) {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        //} else {
+        //TODO
+        //mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+        //}
+        mPostItemAdapter = new PostItemRecyclerViewAdapter(mListener,
+                rootView.findViewById(R.id.recyclerview_blog_empty));
+        mRecyclerView.setAdapter(mPostItemAdapter);
+
         setupPagination();
 
-        return inflater.inflate(R.layout.fragment_blog, container, false);
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onButtonPressed(PostItem item) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onListFragmentInteraction(item);
         }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnListFragmentInteractionListener) {
+            mListener = (OnListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnListFragmentInteractionListener");
         }
     }
 
@@ -87,11 +112,10 @@ public class BlogFragment
     }
 
     private boolean loading = false;
-    private int page = 0;
     private Paginate paginate;
     protected int threshold = 4;
     //protected int totalPages = 3;
-    //protected int itemsPerPage = 10;
+    protected Long itemsPerPage = 12L;
     //private static final int GRID_SPAN = 3;
 
     protected void setupPagination( ) {
@@ -100,18 +124,22 @@ public class BlogFragment
             paginate.unbind();
         }
         loading = false;
-        page = 0;
 
-//        paginate = Paginate.with(mRecyclerView, this)
-//                .setLoadingTriggerThreshold(threshold)
-//                .addLoadingListItem(true)
-//                .setLoadingListItemCreator(null)
-//                .build();
+        paginate = Paginate.with(mRecyclerView, this)
+                .setLoadingTriggerThreshold(threshold)
+                .addLoadingListItem(true)
+                .setLoadingListItemCreator(null)
+                .build();
     }
 
     @Override
     public void onLoadMore() {
         Log.d("Paginate", "onLoadMore");
+
+        Intent requestIntent = new Intent(getActivity(), UpdaterService.class);
+        requestIntent.putExtra(UpdaterService.EXTRA_BLOGGER_BLOG_UPDATE, mBlogItem);
+        getActivity().startService(requestIntent);
+
         loading = true;
     }
 
@@ -126,8 +154,9 @@ public class BlogFragment
             paginate.unbind();
             paginate = null;
         }
-        return true;
-        //return page == totalPages; // If all pages are loaded return true
+        return false;
+
+        // If all pages are loaded return true
     }
     /**
      * This interface must be implemented by activities that contain this
@@ -139,8 +168,8 @@ public class BlogFragment
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onListFragmentInteraction(PostItem item);
     }
 }

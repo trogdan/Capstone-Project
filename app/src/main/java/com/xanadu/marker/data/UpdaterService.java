@@ -3,6 +3,7 @@ package com.xanadu.marker.data;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -15,7 +16,9 @@ import com.cocoahero.android.geojson.Geometry;
 import com.cocoahero.android.geojson.MultiPoint;
 import com.cocoahero.android.geojson.Position;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.api.services.blogger.model.Blog;
+import com.google.api.services.blogger.model.PostList;
 import com.xanadu.marker.remote.BloggerApiUtil;
 import com.xanadu.marker.remote.MarkerWfsUtil;
 import com.xanadu.marker.data.MarkerContract.PlacesEntry;
@@ -39,6 +42,12 @@ public class UpdaterService extends IntentService {
 
     public static final String EXTRA_BLOGGER_BLOGS_UPDATE
             = "com.xanadu.marker.intent.extra.BLOGGER_BLOGS_UPDATE";
+
+    public static final String EXTRA_BLOGGER_BLOG_UPDATE
+            = "com.xanadu.marker.intent.extra.BLOGGER_BLOG_UPDATE";
+
+    public static final String EXTRA_BLOGGER_BLOG_UPDATE_NEXT_PAGE_TOKEN
+            = "com.xanadu.marker.intent.extra.BLOGGER_BLOG_UPDATE";
 
     public UpdaterService() {
         super(TAG);
@@ -118,6 +127,77 @@ public class UpdaterService extends IntentService {
 
             if (blog != null)
             {
+
+                // First, check if the this id exists, and get the last updated time,
+                // and see if it's different than this time
+                Cursor blogCursor = getContentResolver().query(
+                        MarkerContract.BlogsEntry.CONTENT_URI,
+                        new String[] { BlogsEntry.COLUMN_LAST_UPDATED },
+                        MarkerContract.BlogsEntry.COLUMN_SERVICE_BLOG_ID + " = ?",
+                        new String[]{blog.getId()},
+                        null);
+
+                // We should only have one
+                if (blogCursor.getCount() == 1)
+                {
+                    // OK, this blog is already in the DB, check the last update time, to see if we need to
+                    // update the record
+                    blogCursor.moveToNext();
+                    long lastUpdateTime = blogCursor.getInt(0);
+
+                    if (lastUpdateTime != blog.getUpdated().getValue())
+                    {
+                        // is it different, if so, update columns that may have changed, and set the previous
+                        // last update time
+                        ContentValues value = new ContentValues();
+
+                        value.put(BlogsEntry.COLUMN_SERVICE_BLOG_ID, blog.getId());
+                        value.put(BlogsEntry.COLUMN_URL, blog.getUrl());
+                        value.put(BlogsEntry.COLUMN_NAME, blog.getName());
+                        value.put(BlogsEntry.COLUMN_LAST_UPDATED, blog.getUpdated().getValue());
+                        value.put(BlogsEntry.COLUMN_PREV_LAST_UPDATED, lastUpdateTime);
+                        //TODO other fields
+
+                        getContentResolver().update(BlogsEntry.CONTENT_URI,
+                                value,
+                                MarkerContract.BlogsEntry.COLUMN_SERVICE_BLOG_ID + " = ?",
+                                new String[]{blog.getId()});
+                    }
+                    // is it the same? if so, don't bother
+
+                }
+                else if (blogCursor.getCount() > 1)
+                {
+                    Log.e(TAG, "Found duplicate service_blog_id: {" + blog.getId() + "}");
+                }
+                else
+                {
+                    ContentValues value = new ContentValues();
+
+                    value.put(BlogsEntry.COLUMN_SERVICE_BLOG_ID, blog.getId());
+                    value.put(BlogsEntry.COLUMN_URL, blog.getUrl());
+                    value.put(BlogsEntry.COLUMN_NAME, blog.getName());
+                    value.put(BlogsEntry.COLUMN_LAST_UPDATED, blog.getUpdated().getValue());
+                    //TODO other fields
+
+                    getContentResolver().insert(BlogsEntry.CONTENT_URI, value);
+                }
+
+            }
+            else
+            {
+                Log.i(TAG, "Failed to find blog for url: " + url);
+            }
+        }
+        else if (intent.hasExtra(EXTRA_BLOGGER_BLOG_UPDATE))
+        {
+            PostList posts = intent.getParcelableExtra(EXTRA_BLOGGER_BLOG_UPDATE);
+            //PostList posts = BloggerApiUtil.fetchPosts(mBlogItem.service_blog_id, itemsPerPage, null);
+
+            Blog blog = BloggerApiUtil.fetchBlog("");
+
+            if (blog != null)
+            {
                 ContentValues value = new ContentValues();
 
                 value.put(BlogsEntry.COLUMN_SERVICE_BLOG_ID, blog.getId());
@@ -128,10 +208,9 @@ public class UpdaterService extends IntentService {
             }
             else
             {
-                Log.i(TAG, "Failed to find blog for url: " + url);
+                Log.i(TAG, "Failed to find blog for url: " + "");
             }
         }
-
 
         sendStickyBroadcast(
                 new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, false));

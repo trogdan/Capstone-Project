@@ -63,7 +63,7 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingStart="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
-            tools:listitem="@layout/list_item_blogs"
+            tools:listitem="@layout/list_item_blog"
             android:divider="@drawable/listview_border"
             android:dividerHeight="1px"/>
 

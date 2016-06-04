@@ -50,7 +50,7 @@ public class BlogsActivity extends AppCompatActivity implements BlogsFragment.On
         {
             // Fire up the new activity
             Intent startIntent = new Intent(this, BlogActivity.class);
-            startIntent.putExtra(BlogActivity.EXTRA_BLOG_ITEM, item);
+            startIntent.putExtra(BlogItem.EXTRA_BLOG_ITEM, item);
             startActivity(startIntent);
         }
     }

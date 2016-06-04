@@ -11,19 +11,17 @@ import com.xanadu.marker.BlogsFragment.OnListFragmentInteractionListener;
 import com.xanadu.marker.data.BlogItem;
 import com.xanadu.marker.data.BlogLoader;
 
-import java.util.List;
-
 /**
  * {@link RecyclerView.Adapter} that can display a BlogItem and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  */
-public class BlogsItemRecyclerViewAdapter extends RecyclerView.Adapter<BlogsItemRecyclerViewAdapter.ViewHolder> {
+public class BlogItemRecyclerViewAdapter extends RecyclerView.Adapter<BlogItemRecyclerViewAdapter.ViewHolder> {
 
     private final OnListFragmentInteractionListener mListener;
     private Cursor mCursor;
     private View mEmptyView;
 
-    public BlogsItemRecyclerViewAdapter(OnListFragmentInteractionListener listener, View emptyView) {
+    public BlogItemRecyclerViewAdapter(OnListFragmentInteractionListener listener, View emptyView) {
         mListener = listener;
         mEmptyView = emptyView;
     }
@@ -31,7 +29,7 @@ public class BlogsItemRecyclerViewAdapter extends RecyclerView.Adapter<BlogsItem
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_blogs, parent, false);
+                .inflate(R.layout.list_item_blog, parent, false);
         return new ViewHolder(view);
     }
 
