@@ -195,7 +195,8 @@ public class UpdaterService extends IntentService {
                     // Set the prev_last_update_time so we don't try to requery when going back to blog activity
                     if (blogItem.last_update_time != blogItem.prev_last_update_time) {
                         ContentValues value = new ContentValues();
-                        value.put(BlogsEntry.COLUMN_PREV_LAST_UPDATED, blogItem.prev_last_update_time);
+                        value.put(BlogsEntry.COLUMN_PREV_LAST_UPDATED, blogItem.last_update_time);
+                        //value.put(BlogsEntry.COLUMN_PREV_LAST_UPDATED, blogItem.prev_last_update_time);
 
                         // TODO replace this with _ID specific URI
                         getContentResolver().update(BlogsEntry.CONTENT_URI,
@@ -211,6 +212,7 @@ public class UpdaterService extends IntentService {
                         for (int i = 0; i < items.size(); i++) {
                             Post post = items.get(i);
 
+                            List<Post.Images> images = post.getImages();
                             ContentValues value = values[i] = new ContentValues();
                             value.put(PostsEntry.COLUMN_PUBLISHED, post.getPublished().getValue());
                             value.put(PostsEntry.COLUMN_IMAGE_URI,
@@ -223,10 +225,15 @@ public class UpdaterService extends IntentService {
                         }
                         getContentResolver().bulkInsert(PostsEntry.CONTENT_URI, values);
                     }
-                }
-                else {
-                    // We still want to notify the cursor that there is data available?
-                    getContentResolver().notifyChange(PostsEntry.CONTENT_URI, null);
+
+                    // Update the next page token
+                    ContentValues value = new ContentValues();
+                    value.put(BlogsEntry.COLUMN_NEXT_PAGE_TOKEN, posts.getNextPageToken());
+                    // TODO replace this with _ID specific URI
+                    getContentResolver().update(BlogsEntry.CONTENT_URI,
+                            value,
+                            BlogsEntry._ID + " = ?",
+                            new String[]{Integer.toString(blogItem._id)});
                 }
             }
         }

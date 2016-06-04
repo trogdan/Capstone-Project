@@ -18,7 +18,7 @@ public class BlogsActivity extends AppCompatActivity implements BlogsFragment.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blogs);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.blogs_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

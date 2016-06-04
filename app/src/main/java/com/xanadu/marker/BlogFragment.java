@@ -3,17 +3,24 @@ package com.xanadu.marker;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.text.TextPaint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.paginate.Paginate;
 import com.xanadu.marker.data.BlogItem;
 import com.xanadu.marker.data.MarkerContract;
@@ -21,6 +28,8 @@ import com.xanadu.marker.data.PostItem;
 import com.xanadu.marker.data.PostLoader;
 import com.xanadu.marker.data.UpdaterService;
 import com.xanadu.marker.ui.DividerItemDecoration;
+
+import java.lang.reflect.Field;
 
 
 /**
@@ -77,6 +86,24 @@ public class BlogFragment
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_blog, container, false);
+
+        final Toolbar toolbar = (Toolbar)rootView.findViewById(R.id.blog_toolbar);
+        AppCompatActivity appCompatActivity = (AppCompatActivity)getActivity();
+        appCompatActivity.setSupportActionBar(toolbar);
+        appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        CollapsingToolbarLayout collapsingToolbar =
+                (CollapsingToolbarLayout) rootView.findViewById(R.id.blog_collapsing_toolbar);
+        collapsingToolbar.setTitle("Title");
+        collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
+        collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+//        ImageView imageView = (ImageView) rootView.findViewById(R.id.blog_photo);
+//
+//        Glide.with(getContext())
+//                .load(mBlogItem.image_uri)
+//                .error(R.drawable.photo_background_protection)
+//                .crossFade()
+//                .into(imageView);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_blog);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
@@ -219,4 +246,5 @@ public class BlogFragment
         // TODO: Update argument type and name
         void onListFragmentInteraction(PostItem item);
     }
+
 }

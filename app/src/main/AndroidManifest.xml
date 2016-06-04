@@ -47,7 +47,7 @@
         </activity>
         <activity
             android:name=".BlogActivity"
-            android:label="@string/title_activity_blog"
+            android:label="@string/title_fragment_blog"
             android:parentActivityName=".BlogsActivity"
             android:theme="@style/AppTheme">
             <meta-data

@@ -60,6 +60,7 @@ public class BloggerApiUtil {
             }
 
             // Restrict the result content to just the data we need.
+            lister.setFetchImages(true);
             lister.setFields("items(id,author/displayName,published,title,url,images),nextPageToken");
             lister.setMaxResults(maxResults);
 

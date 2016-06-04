@@ -2,6 +2,7 @@ package com.xanadu.marker;
 
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import com.xanadu.marker.data.PostLoader;
  * specified {@link OnListFragmentInteractionListener}.
  */
 public class PostItemRecyclerViewAdapter extends RecyclerView.Adapter<PostItemRecyclerViewAdapter.ViewHolder> {
+
+    private static final String TAG = "PostItemRecyViewAdap";
 
     private final OnListFragmentInteractionListener mListener;
     private Cursor mCursor;
@@ -42,6 +45,8 @@ public class PostItemRecyclerViewAdapter extends RecyclerView.Adapter<PostItemRe
         holder.mIdView.setText(mCursor.getString(PostLoader.COLUMN_TITLE));
         holder.mContentView.setText(mCursor.getString(PostLoader.COLUMN_PUBLISHED));
 
+        Log.d(TAG, "Title: " + mCursor.getString(PostLoader.COLUMN_TITLE));
+        Log.d(TAG, "Date: " + mCursor.getString(PostLoader.COLUMN_PUBLISHED));
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
