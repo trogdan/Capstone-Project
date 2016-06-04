@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.paginate.Paginate;
+import com.xanadu.marker.data.BlogItem;
 
 
 /**
@@ -26,14 +27,9 @@ public class BlogFragment
 {
     private static final String TAG = "BlogFragment";
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_BLOG_ITEM = "blog_item";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private BlogItem mBlogItem;
 
     private OnFragmentInteractionListener mListener;
 
@@ -41,20 +37,10 @@ public class BlogFragment
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment BlogFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static BlogFragment newInstance(String param1, String param2) {
+    public static BlogFragment newInstance(BlogItem blogItem) {
         BlogFragment fragment = new BlogFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable(ARG_BLOG_ITEM, blogItem);
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,8 +49,7 @@ public class BlogFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mBlogItem = getArguments().getParcelable(ARG_BLOG_ITEM);
         }
     }
 

@@ -45,6 +45,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.xanadu.marker.MapsActivity" />
         </activity>
+        <activity
+            android:name=".BlogActivity"
+            android:label="@string/title_activity_blog"
+            android:parentActivityName=".BlogsActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.xanadu.marker.BlogsActivity" />
+        </activity>
 
         <provider
             android:name=".data.MarkerProvider"
@@ -54,7 +63,9 @@
 
         <service
             android:name=".data.UpdaterService"
-            android:exported="false"/>
+            android:exported="false" />
+
+
     </application>
 
 </manifest>

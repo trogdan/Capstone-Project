@@ -8,13 +8,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.xanadu.marker.BlogsFragment.OnListFragmentInteractionListener;
-import com.xanadu.marker.BlogsItemHelper.BlogsItem;
+import com.xanadu.marker.data.BlogItem;
 import com.xanadu.marker.data.BlogLoader;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link BlogsItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a BlogItem and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  */
 public class BlogsItemRecyclerViewAdapter extends RecyclerView.Adapter<BlogsItemRecyclerViewAdapter.ViewHolder> {
@@ -46,10 +46,10 @@ public class BlogsItemRecyclerViewAdapter extends RecyclerView.Adapter<BlogsItem
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
+                if (null != mListener && mCursor != null) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    // TODO mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onListFragmentInteraction(new BlogItem(mCursor));
                 }
             }
         });

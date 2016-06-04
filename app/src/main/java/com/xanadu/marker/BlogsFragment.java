@@ -18,7 +18,7 @@ import android.webkit.URLUtil;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.xanadu.marker.BlogsItemHelper.BlogsItem;
+import com.xanadu.marker.data.BlogItem;
 import com.xanadu.marker.data.BlogLoader;
 import com.xanadu.marker.data.UpdaterService;
 import com.xanadu.marker.ui.DividerItemDecoration;
@@ -191,6 +191,6 @@ public class BlogsFragment
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(BlogsItem item);
+        void onListFragmentInteraction(BlogItem item);
     }
 }
