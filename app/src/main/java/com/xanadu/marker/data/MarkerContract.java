@@ -125,6 +125,9 @@ public class MarkerContract {
 
         public static final String COLUMN_POST_COUNT = "post_count";
 
+        // Used for blogger to get the next paginated set of posts
+        public static final String COLUMN_NEXT_PAGE_TOKEN = "next_page_token";
+
         public static Uri buildBlogsUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }

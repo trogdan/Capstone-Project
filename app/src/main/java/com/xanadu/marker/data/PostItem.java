@@ -32,11 +32,11 @@ public class PostItem implements Parcelable {
 
     // Cursor assumed to be on this item
     public PostItem(Cursor cursor){
-        this.title = cursor.getString(PostLoader.Query.COLUMN_TITLE);
-        this.uri = cursor.getString(PostLoader.Query.COLUMN_URL);
-        this.image_uri = cursor.getString(PostLoader.Query.COLUMN_IMAGE_URI);
-        this.post_id = cursor.getString(PostLoader.Query.COLUMN_POST_ID);
-        this.service_post_id = cursor.getString(PostLoader.Query.COLUMN_SERVICE_POST_ID);
+        this.title = cursor.getString(PostLoader.COLUMN_TITLE);
+        this.uri = cursor.getString(PostLoader.COLUMN_URL);
+        this.image_uri = cursor.getString(PostLoader.COLUMN_IMAGE_URI);
+        this.post_id = cursor.getString(PostLoader.COLUMN_POST_ID);
+        this.service_post_id = cursor.getString(PostLoader.COLUMN_SERVICE_POST_ID);
     }
 
     // Parcelling part

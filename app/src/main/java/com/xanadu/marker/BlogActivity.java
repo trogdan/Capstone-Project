@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 
 
 import com.xanadu.marker.data.BlogItem;
+import com.xanadu.marker.data.PostItem;
 
 public class BlogActivity extends AppCompatActivity implements BlogFragment.OnListFragmentInteractionListener {
 
@@ -32,8 +33,9 @@ public class BlogActivity extends AppCompatActivity implements BlogFragment.OnLi
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onListFragmentInteraction(PostItem item) {
 
     }
 }

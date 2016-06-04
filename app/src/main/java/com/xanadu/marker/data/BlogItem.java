@@ -4,6 +4,8 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.api.services.blogger.model.Blog;
+
 /**
  * Created by dan on 6/3/16.
  */
@@ -15,28 +17,23 @@ public class BlogItem implements Parcelable {
     public String image_uri;
     public String blog_id;
     public String service_blog_id;
-
-    // Constructor
-    public BlogItem(
-            String name,
-            String uri,
-            String image_uri,
-            String blog_id,
-            String service_blog_id){
-        this.name = name;
-        this.uri = uri;
-        this.image_uri = image_uri;
-        this.blog_id = blog_id;
-        this.service_blog_id = service_blog_id;
-    }
+    public String next_page_token;
+    public int _id;
+    public int last_update_time;
+    public int prev_last_update_time;
+    public int post_count;
 
     // Cursor assumed to be on this item
     public BlogItem(Cursor cursor){
-        this.name = cursor.getString(BlogLoader.Query.COLUMN_NAME);
-        this.uri = cursor.getString(BlogLoader.Query.COLUMN_URL);
-        this.image_uri = cursor.getString(BlogLoader.Query.COLUMN_IMAGE_URI);
-        this.blog_id = cursor.getString(BlogLoader.Query.COLUMN_BLOG_ID);
-        this.service_blog_id = cursor.getString(BlogLoader.Query.COLUMN_SERVICE_BLOG_ID);
+        this.name = cursor.getString(BlogLoader.COLUMN_NAME);
+        this.uri = cursor.getString(BlogLoader.COLUMN_URL);
+        this.image_uri = cursor.getString(BlogLoader.COLUMN_IMAGE_URI);
+        this.blog_id = cursor.getString(BlogLoader.COLUMN_BLOG_ID);
+        this.service_blog_id = cursor.getString(BlogLoader.COLUMN_SERVICE_BLOG_ID);
+        this._id = cursor.getInt(BlogLoader._ID);
+        this.last_update_time = cursor.getInt(BlogLoader.COLUMN_LAST_UPDATED);
+        this.prev_last_update_time = cursor.getInt(BlogLoader.COLUMN_PREV_LAST_UPDATED);
+        this.post_count = cursor.getInt(BlogLoader.COLUMN_POST_COUNT);
     }
 
     // Parcelling part
@@ -50,6 +47,14 @@ public class BlogItem implements Parcelable {
         this.image_uri = data[2];
         this.blog_id = data[3];
         this.service_blog_id = data[4];
+
+        int[] intData = new int[4];
+
+        in.readIntArray(intData);
+        this._id = intData[0];
+        this.last_update_time = intData[1];
+        this.prev_last_update_time = intData[2];
+        this.post_count = intData[3];
     }
 
     public int describeContents(){
@@ -64,6 +69,12 @@ public class BlogItem implements Parcelable {
                 this.image_uri,
                 this.blog_id,
                 this.service_blog_id
+        });
+        dest.writeIntArray(new int[] {
+                this._id,
+                this.last_update_time,
+                this.prev_last_update_time,
+                this.post_count
         });
     }
 

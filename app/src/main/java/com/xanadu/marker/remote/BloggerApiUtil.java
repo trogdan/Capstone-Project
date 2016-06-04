@@ -52,6 +52,7 @@ public class BloggerApiUtil {
     {
         try {
             Blogger.Posts.List lister = posts.list(blogId);
+            lister.setKey("AIzaSyAKhkqh332VCZRqOGxkXeCfQwDj5rZGCfY");
 
             if (nextPageToken != null)
             {
@@ -59,7 +60,7 @@ public class BloggerApiUtil {
             }
 
             // Restrict the result content to just the data we need.
-            lister.setFields("items(author/displayName,published,title,url),nextPageToken");
+            lister.setFields("items(id,author/displayName,published,title,url,images),nextPageToken");
             lister.setMaxResults(maxResults);
 
             return lister.execute();

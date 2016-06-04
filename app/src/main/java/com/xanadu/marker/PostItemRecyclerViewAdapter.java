@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.xanadu.marker.BlogFragment.OnListFragmentInteractionListener;
 import com.xanadu.marker.data.BlogLoader;
 import com.xanadu.marker.data.PostItem;
+import com.xanadu.marker.data.PostLoader;
 
 /**
  * {@link RecyclerView.Adapter} that can display a BlogItem and makes a call to the
@@ -29,7 +30,7 @@ public class PostItemRecyclerViewAdapter extends RecyclerView.Adapter<PostItemRe
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_blog, parent, false);
+                .inflate(R.layout.list_item_post, parent, false);
         return new ViewHolder(view);
     }
 
@@ -38,8 +39,8 @@ public class PostItemRecyclerViewAdapter extends RecyclerView.Adapter<PostItemRe
         if (mCursor == null ) return;
         mCursor.moveToPosition(position);
 
-        holder.mIdView.setText(mCursor.getString(BlogLoader.Query.COLUMN_NAME));
-        holder.mContentView.setText(mCursor.getString(BlogLoader.Query.COLUMN_URL));
+        holder.mIdView.setText(mCursor.getString(PostLoader.COLUMN_TITLE));
+        holder.mContentView.setText(mCursor.getString(PostLoader.COLUMN_PUBLISHED));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,8 +68,8 @@ public class PostItemRecyclerViewAdapter extends RecyclerView.Adapter<PostItemRe
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mIdView = (TextView) view.findViewById(R.id.post_list_item_id);
+            mContentView = (TextView) view.findViewById(R.id.post_list_item_content);
         }
 
         @Override

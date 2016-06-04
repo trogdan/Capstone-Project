@@ -16,13 +16,14 @@ import com.cocoahero.android.geojson.Geometry;
 import com.cocoahero.android.geojson.MultiPoint;
 import com.cocoahero.android.geojson.Position;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.api.services.blogger.model.Blog;
+import com.google.api.services.blogger.model.Post;
 import com.google.api.services.blogger.model.PostList;
 import com.xanadu.marker.remote.BloggerApiUtil;
 import com.xanadu.marker.remote.MarkerWfsUtil;
 import com.xanadu.marker.data.MarkerContract.PlacesEntry;
 import com.xanadu.marker.data.MarkerContract.BlogsEntry;
+import com.xanadu.marker.data.MarkerContract.PostsEntry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,8 +47,6 @@ public class UpdaterService extends IntentService {
     public static final String EXTRA_BLOGGER_BLOG_UPDATE
             = "com.xanadu.marker.intent.extra.BLOGGER_BLOG_UPDATE";
 
-    public static final String EXTRA_BLOGGER_BLOG_UPDATE_NEXT_PAGE_TOKEN
-            = "com.xanadu.marker.intent.extra.BLOGGER_BLOG_UPDATE";
 
     public UpdaterService() {
         super(TAG);
@@ -66,8 +65,7 @@ public class UpdaterService extends IntentService {
         sendStickyBroadcast(
                 new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, true));
 
-        if (intent.hasExtra(EXTRA_WFS_QUERY_BOX))
-        {
+        if (intent.hasExtra(EXTRA_WFS_QUERY_BOX)) {
             // Delete all items
             getContentResolver().delete(PlacesEntry.CONTENT_URI, null, null);
 
@@ -120,13 +118,11 @@ public class UpdaterService extends IntentService {
                 Log.e(TAG, "Error updating content.", e);
             }
         }
-        else if (intent.hasExtra(EXTRA_BLOGGER_BLOGS_UPDATE))
-        {
+        else if (intent.hasExtra(EXTRA_BLOGGER_BLOGS_UPDATE)) {
             String url = intent.getStringExtra(EXTRA_BLOGGER_BLOGS_UPDATE);
             Blog blog = BloggerApiUtil.fetchBlog(url);
 
-            if (blog != null)
-            {
+            if (blog != null) {
 
                 // First, check if the this id exists, and get the last updated time,
                 // and see if it's different than this time
@@ -138,15 +134,13 @@ public class UpdaterService extends IntentService {
                         null);
 
                 // We should only have one
-                if (blogCursor.getCount() == 1)
-                {
+                if (blogCursor.getCount() == 1) {
                     // OK, this blog is already in the DB, check the last update time, to see if we need to
                     // update the record
                     blogCursor.moveToNext();
                     long lastUpdateTime = blogCursor.getInt(0);
 
-                    if (lastUpdateTime != blog.getUpdated().getValue())
-                    {
+                    if (lastUpdateTime != blog.getUpdated().getValue()) {
                         // is it different, if so, update columns that may have changed, and set the previous
                         // last update time
                         ContentValues value = new ContentValues();
@@ -156,6 +150,7 @@ public class UpdaterService extends IntentService {
                         value.put(BlogsEntry.COLUMN_NAME, blog.getName());
                         value.put(BlogsEntry.COLUMN_LAST_UPDATED, blog.getUpdated().getValue());
                         value.put(BlogsEntry.COLUMN_PREV_LAST_UPDATED, lastUpdateTime);
+                        value.put(BlogsEntry.COLUMN_POST_COUNT, blog.getPosts().size());
                         //TODO other fields
 
                         getContentResolver().update(BlogsEntry.CONTENT_URI,
@@ -166,18 +161,17 @@ public class UpdaterService extends IntentService {
                     // is it the same? if so, don't bother
 
                 }
-                else if (blogCursor.getCount() > 1)
-                {
+                else if (blogCursor.getCount() > 1) {
                     Log.e(TAG, "Found duplicate service_blog_id: {" + blog.getId() + "}");
                 }
-                else
-                {
+                else {
                     ContentValues value = new ContentValues();
 
                     value.put(BlogsEntry.COLUMN_SERVICE_BLOG_ID, blog.getId());
                     value.put(BlogsEntry.COLUMN_URL, blog.getUrl());
                     value.put(BlogsEntry.COLUMN_NAME, blog.getName());
                     value.put(BlogsEntry.COLUMN_LAST_UPDATED, blog.getUpdated().getValue());
+                    value.put(BlogsEntry.COLUMN_POST_COUNT, blog.getPosts().size());
                     //TODO other fields
 
                     getContentResolver().insert(BlogsEntry.CONTENT_URI, value);
@@ -191,24 +185,49 @@ public class UpdaterService extends IntentService {
         }
         else if (intent.hasExtra(EXTRA_BLOGGER_BLOG_UPDATE))
         {
-            PostList posts = intent.getParcelableExtra(EXTRA_BLOGGER_BLOG_UPDATE);
-            //PostList posts = BloggerApiUtil.fetchPosts(mBlogItem.service_blog_id, itemsPerPage, null);
+            BlogItem blogItem = intent.getParcelableExtra(EXTRA_BLOGGER_BLOG_UPDATE);
 
-            Blog blog = BloggerApiUtil.fetchBlog("");
+            if (blogItem != null) {
+                if (blogItem.last_update_time != blogItem.prev_last_update_time ||
+                        blogItem.next_page_token != null) {
+                    PostList posts = BloggerApiUtil.fetchPosts(blogItem.service_blog_id, /*TODO*/ 12L, blogItem.next_page_token);
 
-            if (blog != null)
-            {
-                ContentValues value = new ContentValues();
+                    // Set the prev_last_update_time so we don't try to requery when going back to blog activity
+                    if (blogItem.last_update_time != blogItem.prev_last_update_time) {
+                        ContentValues value = new ContentValues();
+                        value.put(BlogsEntry.COLUMN_PREV_LAST_UPDATED, blogItem.prev_last_update_time);
 
-                value.put(BlogsEntry.COLUMN_SERVICE_BLOG_ID, blog.getId());
-                value.put(BlogsEntry.COLUMN_URL, blog.getUrl());
-                value.put(BlogsEntry.COLUMN_NAME, blog.getName());
-                value.put(BlogsEntry.COLUMN_LAST_UPDATED, blog.getUpdated().getValue());
-                getContentResolver().insert(BlogsEntry.CONTENT_URI, value);
-            }
-            else
-            {
-                Log.i(TAG, "Failed to find blog for url: " + "");
+                        // TODO replace this with _ID specific URI
+                        getContentResolver().update(BlogsEntry.CONTENT_URI,
+                                value,
+                                BlogsEntry._ID + " = ?",
+                                new String[]{Integer.toString(blogItem._id)});
+                    }
+
+                    List<Post> items = posts.getItems();
+                    if (items != null && !items.isEmpty()) {
+
+                        ContentValues[] values = new ContentValues[items.size()];
+                        for (int i = 0; i < items.size(); i++) {
+                            Post post = items.get(i);
+
+                            ContentValues value = values[i] = new ContentValues();
+                            value.put(PostsEntry.COLUMN_PUBLISHED, post.getPublished().getValue());
+                            value.put(PostsEntry.COLUMN_IMAGE_URI,
+                                    post.getImages() != null && post.getImages().size() > 0 ? post.getImages().get(0).getUrl() : null);
+                            value.put(PostsEntry.COLUMN_TITLE, post.getTitle());
+                            value.put(PostsEntry.COLUMN_SERVICE_POST_ID, post.getId());
+                            value.put(PostsEntry.COLUMN_BLOG_KEY, "TODO");
+                            value.put(PostsEntry.COLUMN_PLACE_KEY, "TODO");
+                            value.put(PostsEntry.COLUMN_URL, post.getUrl());
+                        }
+                        getContentResolver().bulkInsert(PostsEntry.CONTENT_URI, values);
+                    }
+                }
+                else {
+                    // We still want to notify the cursor that there is data available?
+                    getContentResolver().notifyChange(PostsEntry.CONTENT_URI, null);
+                }
             }
         }
 

@@ -11,6 +11,17 @@ import com.xanadu.marker.data.MarkerContract.BlogsEntry;
  */
 public class BlogLoader extends CursorLoader {
 
+    public static final int _ID = 0;
+    public static final int COLUMN_BLOG_ID = 1;
+    public static final int COLUMN_NAME = 2;
+    public static final int COLUMN_DESC = 3;
+    public static final int COLUMN_IMAGE_URI = 4;
+    public static final int COLUMN_SERVICE_BLOG_ID = 5;
+    public static final int COLUMN_URL = 6;
+    public static final int COLUMN_LAST_UPDATED = 7;
+    public static final int COLUMN_PREV_LAST_UPDATED = 8;
+    public static final int COLUMN_POST_COUNT = 9;
+
     public static BlogLoader newAllBlogsInstance(Context context) {
         return new BlogLoader(context, BlogsEntry.CONTENT_URI);
     }
@@ -31,16 +42,11 @@ public class BlogLoader extends CursorLoader {
                 BlogsEntry.COLUMN_DESC,
                 BlogsEntry.COLUMN_IMAGE_URI,
                 BlogsEntry.COLUMN_SERVICE_BLOG_ID,
-                BlogsEntry.COLUMN_URL
+                BlogsEntry.COLUMN_URL,
+                BlogsEntry.COLUMN_LAST_UPDATED,
+                BlogsEntry.COLUMN_PREV_LAST_UPDATED,
+                BlogsEntry.COLUMN_POST_COUNT
         };
-
-        int _ID = 0;
-        int COLUMN_BLOG_ID = 1;
-        int COLUMN_NAME = 2;
-        int COLUMN_DESC = 3;
-        int COLUMN_IMAGE_URI = 4;
-        int COLUMN_SERVICE_BLOG_ID = 5;
-        int COLUMN_URL = 6;
     }
 
 

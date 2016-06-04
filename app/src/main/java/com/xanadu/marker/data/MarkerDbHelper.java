@@ -59,7 +59,8 @@ public class MarkerDbHelper extends SQLiteOpenHelper {
                 BlogsEntry.COLUMN_URL + " TEXT UNIQUE NOT NULL," +
                 BlogsEntry.COLUMN_LAST_UPDATED + " INTEGER NOT NULL, " +
                 BlogsEntry.COLUMN_PREV_LAST_UPDATED + " INTEGER, " +
-                BlogsEntry.COLUMN_POST_COUNT + " INTEGER NOT NULL " +
+                BlogsEntry.COLUMN_POST_COUNT + " INTEGER NOT NULL, " +
+                BlogsEntry.COLUMN_NEXT_PAGE_TOKEN + " TEXT " +
                 " );";
         final String SQL_CREATE_POSTS_TABLE = "CREATE TABLE " + PostsEntry.TABLE_NAME + " (" +
                 PostsEntry._ID + " INTEGER PRIMARY KEY," +

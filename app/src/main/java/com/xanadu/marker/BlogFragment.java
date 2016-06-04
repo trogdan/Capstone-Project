@@ -2,9 +2,11 @@ package com.xanadu.marker;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,7 +16,9 @@ import android.view.ViewGroup;
 
 import com.paginate.Paginate;
 import com.xanadu.marker.data.BlogItem;
+import com.xanadu.marker.data.MarkerContract;
 import com.xanadu.marker.data.PostItem;
+import com.xanadu.marker.data.PostLoader;
 import com.xanadu.marker.data.UpdaterService;
 import com.xanadu.marker.ui.DividerItemDecoration;
 
@@ -29,11 +33,12 @@ import com.xanadu.marker.ui.DividerItemDecoration;
  */
 public class BlogFragment
         extends Fragment
-        implements Paginate.Callbacks
+        implements Paginate.Callbacks, LoaderManager.LoaderCallbacks<Cursor>
 {
     private static final String TAG = "BlogFragment";
 
     private static final String ARG_BLOG_ITEM = "blog_item";
+    private static final int POST_LOADER = 3;
 
     private BlogItem mBlogItem;
 
@@ -54,11 +59,17 @@ public class BlogFragment
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(POST_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mBlogItem = getArguments().getParcelable(ARG_BLOG_ITEM);
         }
+
     }
 
     @Override
@@ -114,8 +125,6 @@ public class BlogFragment
     private boolean loading = false;
     private Paginate paginate;
     protected int threshold = 4;
-    //protected int totalPages = 3;
-    protected Long itemsPerPage = 12L;
     //private static final int GRID_SPAN = 3;
 
     protected void setupPagination( ) {
@@ -136,11 +145,32 @@ public class BlogFragment
     public void onLoadMore() {
         Log.d("Paginate", "onLoadMore");
 
-        Intent requestIntent = new Intent(getActivity(), UpdaterService.class);
-        requestIntent.putExtra(UpdaterService.EXTRA_BLOGGER_BLOG_UPDATE, mBlogItem);
-        getActivity().startService(requestIntent);
+        // We need the latest next_page_token
+        // First, check if the this id exists, and get the last updated time,
+        // and see if it's different than this time
+        Cursor blogCursor = getContext().getContentResolver().query(
+                MarkerContract.BlogsEntry.CONTENT_URI,
+                new String[] { MarkerContract.BlogsEntry.COLUMN_NEXT_PAGE_TOKEN },
+                MarkerContract.BlogsEntry._ID + " = ?",
+                new String[]{Integer.toString(mBlogItem._id)},
+                null);
 
-        loading = true;
+        // We should only have one
+        if (blogCursor.getCount() == 1) {
+            // Set the pagination token for the blogger client api
+            blogCursor.moveToNext();
+            mBlogItem.next_page_token = blogCursor.getString(0);
+
+            Intent requestIntent = new Intent(getActivity(), UpdaterService.class);
+            requestIntent.putExtra(UpdaterService.EXTRA_BLOGGER_BLOG_UPDATE, mBlogItem);
+            getActivity().startService(requestIntent);
+
+            loading = true;
+        }
+        else {
+            loading = false;
+            Log.e(TAG, "Error querying blogs, did not find id");
+        }
     }
 
     @Override
@@ -154,10 +184,27 @@ public class BlogFragment
             paginate.unbind();
             paginate = null;
         }
-        return false;
 
-        // If all pages are loaded return true
+        // If all posts are loaded return true
+        if (mBlogItem.post_count != mPostItemAdapter.getItemCount()) return false;
+        return true;
     }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return PostLoader.newAllPostsInstance(getContext());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mPostItemAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mPostItemAdapter.swapCursor(null);
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

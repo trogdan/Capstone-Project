@@ -38,8 +38,8 @@ public class BlogItemRecyclerViewAdapter extends RecyclerView.Adapter<BlogItemRe
         if (mCursor == null ) return;
         mCursor.moveToPosition(position);
 
-        holder.mIdView.setText(mCursor.getString(BlogLoader.Query.COLUMN_NAME));
-        holder.mContentView.setText(mCursor.getString(BlogLoader.Query.COLUMN_URL));
+        holder.mIdView.setText(mCursor.getString(BlogLoader.COLUMN_NAME));
+        holder.mContentView.setText(mCursor.getString(BlogLoader.COLUMN_URL));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,8 +67,8 @@ public class BlogItemRecyclerViewAdapter extends RecyclerView.Adapter<BlogItemRe
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mIdView = (TextView) view.findViewById(R.id.blog_list_item_id);
+            mContentView = (TextView) view.findViewById(R.id.blog_list_item_content);
         }
 
         @Override

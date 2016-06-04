@@ -11,6 +11,14 @@ import com.xanadu.marker.data.MarkerContract.PostsEntry;
  */
 public class PostLoader extends CursorLoader {
 
+    public static final int _ID = 0;
+    public static final int COLUMN_POST_ID = 1;
+    public static final int COLUMN_TITLE = 2;
+    public static final int COLUMN_PUBLISHED = 3;
+    public static final int COLUMN_IMAGE_URI = 4;
+    public static final int COLUMN_SERVICE_POST_ID = 5;
+    public static final int COLUMN_URL = 6;
+
     public static PostLoader newAllPostsInstance(Context context) {
         return new PostLoader(context, PostsEntry.CONTENT_URI);
     }
@@ -34,13 +42,6 @@ public class PostLoader extends CursorLoader {
                 PostsEntry.COLUMN_URL
         };
 
-        int _ID = 0;
-        int COLUMN_POST_ID = 1;
-        int COLUMN_TITLE = 2;
-        int COLUMN_PUBLISHED = 3;
-        int COLUMN_IMAGE_URI = 4;
-        int COLUMN_SERVICE_POST_ID = 5;
-        int COLUMN_URL = 6;
     }
 
 
