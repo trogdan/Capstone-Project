@@ -50,7 +50,7 @@ public class BlogItemRecyclerViewAdapter extends RecyclerView.Adapter<BlogItemRe
         mCursor.moveToPosition(position);
 
         holder.mNameView.setText(mCursor.getString(BlogLoader.COLUMN_NAME));
-        holder.mDescView.setText(mCursor.getString(BlogLoader.COLUMN_DESC));
+        holder.mDescView.setText(mCursor.getString(BlogLoader.COLUMN_DESC)); // TODO it's possible to have HTML here
         //Log.d(TAG, "Latest Updated: " + mCursor.getLong(BlogLoader.COLUMN_LAST_UPDATED));
         holder.mDateView.setText(mUpdatedLabel + "  " +
                 mSimpleDateFormat.format(new Date(mCursor.getLong(BlogLoader.COLUMN_LAST_UPDATED))));
