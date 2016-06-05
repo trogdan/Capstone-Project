@@ -30,6 +30,10 @@
     <string name="empty_blogs_list_server_error">No blog information available. The server is not returning valid data. Please check for an updated version of Marker.</string>
     <string name="empty_blogs_list_invalid_location">No blog information available. The location in settings is not recognized by the blog server.</string>
 
+    <string name="empty_blogs_list_item_name">Unknown Blog Name</string>
+    <string name="empty_blogs_list_item_desc">Unknown Blog Description</string>
+    <string name="empty_blogs_list_item_date">Last Updated: Unknown</string>
 
+    <string name="blogs_list_item_date_prefix">Last Updated: </string>
 
 </resources>

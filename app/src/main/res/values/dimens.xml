@@ -7,7 +7,8 @@
     <dimen name="fab_press_translation_z">12dp</dimen>
     <dimen name="fab_size">56dp</dimen>
 
-    <dimen name="text_margin">16dp</dimen>
+    <dimen name="text_margin_side">16dp</dimen>
+    <dimen name="text_margin">8dp</dimen>
 
     <dimen name="add_url_height">44dp</dimen>
     <dimen name="add_url_padding">8dp</dimen>
@@ -25,6 +26,9 @@
     <dimen name="list_bottom_margin">28dp</dimen>
     <dimen name="list_toolbar_side_margin">0dp</dimen>
     <integer name="list_column_count">2</integer>
+
+    <dimen name="blogs_thumbnail_height">72dp</dimen>
+    <dimen name="blogs_thumbnail_margin">16dp</dimen>
 
     <dimen name="blog_title_text_size">26sp</dimen>
     <dimen name="blog_body_text_size">18sp</dimen>

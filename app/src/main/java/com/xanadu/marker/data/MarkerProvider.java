@@ -179,7 +179,7 @@ public class MarkerProvider extends ContentProvider {
             case POSTS_WITH_BLOG:
                 return MarkerContract.PostsEntry.CONTENT_TYPE;
             case POSTS_WITH_POST:
-                return MarkerContract.PostsEntry.CONTENT_TYPE;
+                return MarkerContract.PostsEntry.CONTENT_ITEM_TYPE;
             case PLACES:
                 return MarkerContract.PlacesEntry.CONTENT_TYPE;
             case BLOGS:

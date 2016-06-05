@@ -151,6 +151,7 @@ public class UpdaterService extends IntentService {
                         value.put(BlogsEntry.COLUMN_SERVICE_BLOG_ID, blog.getId());
                         value.put(BlogsEntry.COLUMN_URL, blog.getUrl());
                         value.put(BlogsEntry.COLUMN_NAME, blog.getName());
+                        value.put(BlogsEntry.COLUMN_NAME, blog.getDescription());
                         value.put(BlogsEntry.COLUMN_LAST_UPDATED, blog.getUpdated().getValue());
                         value.put(BlogsEntry.COLUMN_PREV_LAST_UPDATED, lastUpdateTime);
                         value.put(BlogsEntry.COLUMN_POST_COUNT, blog.getPosts().size());
@@ -173,7 +174,9 @@ public class UpdaterService extends IntentService {
                     value.put(BlogsEntry.COLUMN_SERVICE_BLOG_ID, blog.getId());
                     value.put(BlogsEntry.COLUMN_URL, blog.getUrl());
                     value.put(BlogsEntry.COLUMN_NAME, blog.getName());
+                    value.put(BlogsEntry.COLUMN_DESC, blog.getDescription());
                     value.put(BlogsEntry.COLUMN_LAST_UPDATED, blog.getUpdated().getValue());
+                    Log.d(TAG, "Received updated time " + blog.getUpdated().getValue());
                     value.put(BlogsEntry.COLUMN_POST_COUNT, blog.getPosts().getTotalItems().intValue());
                     //TODO other fields
 

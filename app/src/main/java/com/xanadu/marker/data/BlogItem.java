@@ -19,9 +19,9 @@ public class BlogItem implements Parcelable {
     public String service_blog_id;
     public String next_page_token;
     public int _id;
-    public int last_update_time;
-    public int prev_last_update_time;
     public int post_count;
+    public long last_update_time;
+    public long prev_last_update_time;
 
     // Cursor assumed to be on this item
     public BlogItem(Cursor cursor){
@@ -32,9 +32,9 @@ public class BlogItem implements Parcelable {
         this.service_blog_id = cursor.getString(BlogLoader.COLUMN_SERVICE_BLOG_ID);
         this.next_page_token = cursor.getString(BlogLoader.COLUMN_NEXT_PAGE_TOKEN);
         this._id = cursor.getInt(BlogLoader._ID);
-        this.last_update_time = cursor.getInt(BlogLoader.COLUMN_LAST_UPDATED);
-        this.prev_last_update_time = cursor.getInt(BlogLoader.COLUMN_PREV_LAST_UPDATED);
         this.post_count = cursor.getInt(BlogLoader.COLUMN_POST_COUNT);
+        this.last_update_time = cursor.getLong(BlogLoader.COLUMN_LAST_UPDATED);
+        this.prev_last_update_time = cursor.getLong(BlogLoader.COLUMN_PREV_LAST_UPDATED);
     }
 
     // Parcelling part
@@ -50,13 +50,15 @@ public class BlogItem implements Parcelable {
         this.service_blog_id = data[4];
         this.next_page_token = data[5];
 
-        int[] intData = new int[4];
-
+        int[] intData = new int[2];
         in.readIntArray(intData);
         this._id = intData[0];
-        this.last_update_time = intData[1];
-        this.prev_last_update_time = intData[2];
-        this.post_count = intData[3];
+        this.post_count = intData[1];
+
+        long[] longData = new long[2];
+        in.readLongArray(longData);
+        this.last_update_time = longData[0];
+        this.prev_last_update_time = longData[1];
     }
 
     public int describeContents(){
@@ -75,9 +77,11 @@ public class BlogItem implements Parcelable {
         });
         dest.writeIntArray(new int[] {
                 this._id,
-                this.last_update_time,
-                this.prev_last_update_time,
                 this.post_count
+        });
+        dest.writeLongArray(new long[] {
+                this.last_update_time,
+                this.prev_last_update_time
         });
     }
 

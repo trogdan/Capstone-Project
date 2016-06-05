@@ -8,13 +8,13 @@
         android:id="@+id/post_list_item_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
+        android:layout_margin="@dimen/text_margin_side"
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <TextView
         android:id="@+id/post_list_item_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
+        android:layout_margin="@dimen/text_margin_side"
         android:textAppearance="?attr/textAppearanceListItem" />
 </LinearLayout>
