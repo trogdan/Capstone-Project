@@ -174,7 +174,7 @@ public class UpdaterService extends IntentService {
                     value.put(BlogsEntry.COLUMN_URL, blog.getUrl());
                     value.put(BlogsEntry.COLUMN_NAME, blog.getName());
                     value.put(BlogsEntry.COLUMN_LAST_UPDATED, blog.getUpdated().getValue());
-                    value.put(BlogsEntry.COLUMN_POST_COUNT, blog.getPosts().size());
+                    value.put(BlogsEntry.COLUMN_POST_COUNT, blog.getPosts().getTotalItems().intValue());
                     //TODO other fields
 
                     getContentResolver().insert(BlogsEntry.CONTENT_URI, value);
@@ -218,11 +218,12 @@ public class UpdaterService extends IntentService {
                             ContentValues value = values[i] = new ContentValues();
                             value.put(PostsEntry.COLUMN_PUBLISHED, post.getPublished().getValue());
                             value.put(PostsEntry.COLUMN_IMAGE_URI,
-                                    post.getImages() != null && post.getImages().size() > 0 ? post.getImages().get(0).getUrl() : null);
+                                    post.getImages() != null && post.getImages().size() > 0 ?
+                                            post.getImages().get(0).getUrl() : null);
                             value.put(PostsEntry.COLUMN_TITLE, post.getTitle());
                             value.put(PostsEntry.COLUMN_SERVICE_POST_ID, post.getId());
                             value.put(PostsEntry.COLUMN_BLOG_KEY, blogItem._id);
-                            value.put(PostsEntry.COLUMN_PLACE_KEY, "TODO");
+                            value.put(PostsEntry.COLUMN_PLACE_KEY, "TODO"); //TODO
                             value.put(PostsEntry.COLUMN_URL, post.getUrl());
                         }
                         getContentResolver().bulkInsert(PostsEntry.CONTENT_URI, values);

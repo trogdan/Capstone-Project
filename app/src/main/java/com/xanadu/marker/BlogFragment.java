@@ -172,6 +172,13 @@ public class BlogFragment
     public void onLoadMore() {
         Log.d("Paginate", "onLoadMore");
 
+        // Seems weird, but this gets called even if we have hasLoadedAllItems returns true,
+        // let's double check
+//        if (hasLoadedAllItems()) {
+//            loading = false;
+//            return;
+//        }
+
         // We need the latest next_page_token
         // First, check if the this id exists, and get the last updated time,
         // and see if it's different than this time
@@ -207,14 +214,14 @@ public class BlogFragment
 
     @Override
     public boolean hasLoadedAllItems() {
-        if (paginate != null) {
-            paginate.unbind();
-            paginate = null;
-        }
-
         // If all posts are loaded return true
-        if (mBlogItem.post_count != mPostItemAdapter.getItemCount()) return false;
-        return true;
+        int itemCount = mPostItemAdapter.getItemCount();
+        if (mBlogItem.post_count != itemCount) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
     @Override
@@ -225,6 +232,7 @@ public class BlogFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mPostItemAdapter.swapCursor(data);
+        loading = false;
     }
 
     @Override

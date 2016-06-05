@@ -21,6 +21,7 @@ public class BlogLoader extends CursorLoader {
     public static final int COLUMN_LAST_UPDATED = 7;
     public static final int COLUMN_PREV_LAST_UPDATED = 8;
     public static final int COLUMN_POST_COUNT = 9;
+    public static final int COLUMN_NEXT_PAGE_TOKEN = 10;
 
     public static BlogLoader newAllBlogsInstance(Context context) {
         return new BlogLoader(context, BlogsEntry.CONTENT_URI);
@@ -45,7 +46,8 @@ public class BlogLoader extends CursorLoader {
                 BlogsEntry.COLUMN_URL,
                 BlogsEntry.COLUMN_LAST_UPDATED,
                 BlogsEntry.COLUMN_PREV_LAST_UPDATED,
-                BlogsEntry.COLUMN_POST_COUNT
+                BlogsEntry.COLUMN_POST_COUNT,
+                BlogsEntry.COLUMN_NEXT_PAGE_TOKEN
         };
     }
 
