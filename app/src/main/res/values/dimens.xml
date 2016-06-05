@@ -28,7 +28,7 @@
     <integer name="list_column_count">2</integer>
 
     <dimen name="blogs_thumbnail_height">72dp</dimen>
-    <dimen name="blogs_thumbnail_margin">16dp</dimen>
+    <dimen name="blogs_thumbnail_margin">8dp</dimen>
 
     <dimen name="blog_title_text_size">26sp</dimen>
     <dimen name="blog_body_text_size">18sp</dimen>

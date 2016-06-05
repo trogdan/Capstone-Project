@@ -13,6 +13,8 @@ import com.xanadu.marker.data.PostItem;
 public class BlogActivity extends AppCompatActivity implements BlogFragment.OnListFragmentInteractionListener {
 
     private static String BLOG_BUNDLE_BLOG_ITEM = "BLOG_BUNDLE_BLOG_ITEM";
+    private static final String TAG_BLOG_FRAGMENT = "BlogFragment";
+
     private boolean mTwoPane = false;
     private BlogItem mBlogItem;
 
@@ -25,17 +27,19 @@ public class BlogActivity extends AppCompatActivity implements BlogFragment.OnLi
             // Create the blog fragment and add it to the activity
             // using a fragment transaction.
             mBlogItem = getIntent().getParcelableExtra(BlogItem.EXTRA_BLOG_ITEM);
+            BlogFragment fragment = BlogFragment.newInstance(mBlogItem);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.blog_container, fragment, TAG_BLOG_FRAGMENT)
+                    .commit();
         }
         else
         {
             mBlogItem = savedInstanceState.getParcelable(BLOG_BUNDLE_BLOG_ITEM);
+            BlogFragment fragment = (BlogFragment)getSupportFragmentManager().findFragmentByTag(TAG_BLOG_FRAGMENT);
+
+            fragment.initInstance(mBlogItem);
         }
-
-        BlogFragment fragment = BlogFragment.newInstance(mBlogItem);
-
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.blog_container, fragment)
-                .commit();
 
         // Being here means we are in animation mode
         // TODO supportPostponeEnterTransition();

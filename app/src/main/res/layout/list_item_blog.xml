@@ -13,7 +13,7 @@
         android:layout_marginLeft="4dp"
         android:layout_marginTop="@dimen/blogs_thumbnail_margin"
         android:layout_marginBottom="@dimen/blogs_thumbnail_margin"
-        android:id="@+id/imageView"
+        android:id="@+id/blog_list_item_thumbnail"
         app:layout_row="0"
         app:layout_rowSpan="3"
         app:layout_column="0"
@@ -35,7 +35,7 @@
         android:maxLines="2"
         android:textColor="@color/primary_text"
         android:textStyle="bold"
-        android:textSize="22sp"
+        android:textSize="18sp"
         android:scrollHorizontally="false"
         android:text="@string/empty_blogs_list_item_name" />
 

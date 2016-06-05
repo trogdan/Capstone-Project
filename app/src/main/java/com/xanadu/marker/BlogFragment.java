@@ -63,6 +63,14 @@ public class BlogFragment
         return fragment;
     }
 
+    public void initInstance(BlogItem blogItem) {
+        this.mBlogItem = blogItem;
+        //Bundle args = new Bundle();
+        //args.putParcelable(ARG_BLOG_ITEM, blogItem);
+        //this.setArguments(args);
+    }
+
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(POST_LOADER, null, this);

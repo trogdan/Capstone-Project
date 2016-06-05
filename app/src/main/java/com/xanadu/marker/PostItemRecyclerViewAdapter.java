@@ -2,17 +2,21 @@ package com.xanadu.marker;
 
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.xanadu.marker.BlogFragment.OnListFragmentInteractionListener;
 import com.xanadu.marker.data.BlogItem;
 import com.xanadu.marker.data.BlogLoader;
 import com.xanadu.marker.data.PostItem;
 import com.xanadu.marker.data.PostLoader;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * {@link RecyclerView.Adapter} that can display a BlogItem and makes a call to the
@@ -23,9 +27,12 @@ public class PostItemRecyclerViewAdapter extends RecyclerView.Adapter<PostItemRe
     private static final String TAG = "PostItemRecyViewAdap";
 
     private final OnListFragmentInteractionListener mListener;
+    private final SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("EEE, MMM d, yyyy",
+            java.util.Locale.getDefault());
     private Cursor mCursor;
     private View mEmptyView;
     private BlogItem mBlogItem;
+    private String mUpdatedLabel;
 
     public PostItemRecyclerViewAdapter(OnListFragmentInteractionListener listener, View emptyView, BlogItem blogItem) {
         mListener = listener;
@@ -35,8 +42,10 @@ public class PostItemRecyclerViewAdapter extends RecyclerView.Adapter<PostItemRe
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // We actually reused the blog list item, since they're pretty similiar
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_post, parent, false);
+                .inflate(R.layout.list_item_blog, parent, false);
+        mUpdatedLabel = parent.getResources().getString(R.string.post_list_item_date_prefix);
         return new ViewHolder(view);
     }
 
@@ -45,9 +54,18 @@ public class PostItemRecyclerViewAdapter extends RecyclerView.Adapter<PostItemRe
         if (mCursor == null ) return;
         mCursor.moveToPosition(position);
 
-        holder.mIdView.setText(mCursor.getString(PostLoader.COLUMN_TITLE));
-        holder.mContentView.setText(mCursor.getString(PostLoader.COLUMN_PUBLISHED));
+        holder.mNameView.setText(mCursor.getString(PostLoader.COLUMN_TITLE));
+        holder.mDescView.setText("");
+        holder.mDateView.setText(mUpdatedLabel + "  " +
+                mSimpleDateFormat.format(new Date(mCursor.getLong(PostLoader.COLUMN_PUBLISHED))));
 
+        String imageUri = mCursor.getString(PostLoader.COLUMN_IMAGE_URI);
+        Glide.with(holder.mView.getContext())
+            .load(imageUri)
+            .error(holder.mView.getResources().getDrawable(R.drawable.ic_marker))
+            .placeholder(holder.mView.getResources().getDrawable(R.drawable.ic_marker))
+            .crossFade()
+            .into(holder.mThumbnail);
         //Log.d(TAG, "Title: " + mCursor.getString(PostLoader.COLUMN_TITLE));
         //Log.d(TAG, "Date: " + mCursor.getString(PostLoader.COLUMN_TITLE));
 
@@ -72,19 +90,23 @@ public class PostItemRecyclerViewAdapter extends RecyclerView.Adapter<PostItemRe
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
+        public final TextView mNameView;
+        public final TextView mDescView;
+        public final TextView mDateView;
+        public final ImageView mThumbnail;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.post_list_item_id);
-            mContentView = (TextView) view.findViewById(R.id.post_list_item_content);
+            mNameView = (TextView) view.findViewById(R.id.blog_list_item_name);
+            mDescView = (TextView) view.findViewById(R.id.blog_list_item_desc);
+            mDateView = (TextView) view.findViewById(R.id.blog_list_item_date);
+            mThumbnail = (ImageView) view.findViewById(R.id.blog_list_item_thumbnail);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mDateView.getText() + "'";
         }
     }
 

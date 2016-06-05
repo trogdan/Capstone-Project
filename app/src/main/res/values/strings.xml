@@ -35,5 +35,6 @@
     <string name="empty_blogs_list_item_date">Last Updated: Unknown</string>
 
     <string name="blogs_list_item_date_prefix">Last Updated: </string>
+    <string name="post_list_item_date_prefix">Published: </string>
 
 </resources>

@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.xanadu.marker.BlogsFragment.OnListFragmentInteractionListener;
@@ -79,6 +80,7 @@ public class BlogItemRecyclerViewAdapter extends RecyclerView.Adapter<BlogItemRe
         public final TextView mNameView;
         public final TextView mDescView;
         public final TextView mDateView;
+        public final ImageView mThumbnail;
 
         public ViewHolder(View view) {
             super(view);
@@ -86,6 +88,7 @@ public class BlogItemRecyclerViewAdapter extends RecyclerView.Adapter<BlogItemRe
             mNameView = (TextView) view.findViewById(R.id.blog_list_item_name);
             mDescView = (TextView) view.findViewById(R.id.blog_list_item_desc);
             mDateView = (TextView) view.findViewById(R.id.blog_list_item_date);
+            mThumbnail = (ImageView) view.findViewById(R.id.blog_list_item_thumbnail);
         }
 
         @Override
