@@ -9,22 +9,25 @@
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/blogs_appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:elevation="4dp">
+            app:elevation="4dp"
+            android:fitsSystemWindows="true">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/blogs_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:elevation="@dimen/appbar_elevation"
-                app:layout_scrollFlags="scroll|enterAlways"
-                android:background="@color/primary_dark">
+                android:background="@color/primary_dark"
+                android:fitsSystemWindows="true"
+                app:layout_collapseMode="pin">
 
             </android.support.v7.widget.Toolbar>
 

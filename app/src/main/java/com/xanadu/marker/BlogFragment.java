@@ -3,7 +3,6 @@ package com.xanadu.marker;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
@@ -13,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextPaint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,8 +26,6 @@ import com.xanadu.marker.data.PostItem;
 import com.xanadu.marker.data.PostLoader;
 import com.xanadu.marker.data.UpdaterService;
 import com.xanadu.marker.ui.DividerItemDecoration;
-
-import java.lang.reflect.Field;
 
 
 /**
@@ -97,13 +93,13 @@ public class BlogFragment
         collapsingToolbar.setTitle(rootView.getResources().getString(R.string.title_fragment_blog));
         collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
-//        ImageView imageView = (ImageView) rootView.findViewById(R.id.blog_photo);
-//
+
+        ImageView imageView = (ImageView) rootView.findViewById(R.id.blog_photo);
 //        Glide.with(getContext())
-//                .load(mBlogItem.image_uri)
-//                .error(R.drawable.photo_background_protection)
-//                .crossFade()
-//                .into(imageView);
+//                    .load(mBlogItem.image_uri)
+//                    .error(getResources().getDrawable(R.drawable.bg_blog_default))
+//                    .crossFade()
+//                    .into(imageView);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_blog);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
