@@ -61,7 +61,7 @@ public class MarkerProvider extends ContentProvider {
         sPostsByBlogQueryBuilder = new SQLiteQueryBuilder();
 
         //This is an inner join which looks like
-        //posts INNER JOIN blogs ON posts.blog_key = blogs._id
+        //posts INNER_JOIN blogs ON posts.blog_key = blogs._id
         sPostsByBlogQueryBuilder.setTables(
                 MarkerContract.PostsEntry.TABLE_NAME + " INNER JOIN " +
                         MarkerContract.BlogsEntry.TABLE_NAME +
@@ -73,14 +73,14 @@ public class MarkerProvider extends ContentProvider {
     }
 
     //places.place_id = ?
-    private static final String sPlaceSelection =
+    private static final String sPlaceIdSelection =
             MarkerContract.PlacesEntry.TABLE_NAME+
-                    "." + MarkerContract.PlacesEntry.COLUMN_PLACE_ID + " = ? ";
+                    "." + MarkerContract.PlacesEntry._ID + " = ? ";
 
     //blogs.blog_id = ?
-    private static final String sBlogSelection =
+    private static final String sBlogIdSelection =
             MarkerContract.BlogsEntry.TABLE_NAME+
-                    "." + MarkerContract.BlogsEntry.COLUMN_BLOG_ID + " = ? ";
+                    "." + MarkerContract.BlogsEntry._ID + " = ? ";
 
     //posts._id = ?
     private static final String sPostsIdSelection =
@@ -88,10 +88,10 @@ public class MarkerProvider extends ContentProvider {
                     "." + MarkerContract.PostsEntry._ID + " = ? ";
 
     private Cursor getPostsByPlace(Uri uri, String[] projection, String sortOrder) {
-        String placeFromUri = MarkerContract.PostsEntry.getPlaceFromUri(uri);
+        String placeIdFromUri = MarkerContract.PostsEntry.getPlaceFromUri(uri);
 
-        String[] selectionArgs = new String[]{placeFromUri};
-        String selection = sPlaceSelection;
+        String[] selectionArgs = new String[]{placeIdFromUri};
+        String selection = sPlaceIdSelection;
 
         return sPostsByPlaceQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
@@ -104,10 +104,10 @@ public class MarkerProvider extends ContentProvider {
     }
 
     private Cursor getPostsByBlog(Uri uri, String[] projection, String sortOrder) {
-        String blogFromUri = MarkerContract.PostsEntry.getBlogFromUri(uri);
+        String blogIdFromUri = MarkerContract.PostsEntry.getBlogFromUri(uri);
 
-        String[] selectionArgs = new String[]{blogFromUri};
-        String selection = sBlogSelection;
+        String[] selectionArgs = new String[]{blogIdFromUri};
+        String selection = sBlogIdSelection;
 
         return sPostsByBlogQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
@@ -149,12 +149,13 @@ public class MarkerProvider extends ContentProvider {
         matcher.addURI(authority, MarkerContract.PATH_PLACES, PLACES);
         matcher.addURI(authority, MarkerContract.PATH_BLOGS, BLOGS);
         matcher.addURI(authority, MarkerContract.PATH_POSTS, POSTS);
-        matcher.addURI(authority, MarkerContract.PATH_POSTS + "/*",
+        matcher.addURI(authority, MarkerContract.PATH_POSTS + "/#",
                 POSTS_WITH_POST);
         matcher.addURI(authority, MarkerContract.PATH_POSTS + "/" +
-                MarkerContract.PATH_PLACE + "/*", POSTS_WITH_PLACE);
-        matcher.addURI(authority, MarkerContract.PATH_POSTS + "/" +
-                MarkerContract.PATH_BLOG + "/*", POSTS_WITH_BLOG);
+                MarkerContract.PATH_PLACE + "/#", POSTS_WITH_PLACE);
+
+        String postsWithBlog = MarkerContract.PATH_POSTS + "/" + MarkerContract.PATH_BLOG + "/#";
+        matcher.addURI(authority, postsWithBlog, POSTS_WITH_BLOG);
 
         return matcher;
     }

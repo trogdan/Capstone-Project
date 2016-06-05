@@ -219,7 +219,7 @@ public class BlogFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return PostLoader.newAllPostsInstance(getContext());
+        return PostLoader.newBlogPostsInstance(getContext(), mBlogItem._id);
     }
 
     @Override

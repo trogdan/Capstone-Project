@@ -24,6 +24,10 @@ public class PostLoader extends CursorLoader {
         return new PostLoader(context, PostsEntry.CONTENT_URI);
     }
 
+    public static PostLoader newBlogPostsInstance(Context context, int blogId) {
+        return new PostLoader(context, PostsEntry.buildPostsBlog(blogId));
+    }
+
     public static PostLoader newInstanceForItemId(Context context, long itemId) {
         return new PostLoader(context, PostsEntry.buildPostsUri(itemId));
     }
@@ -34,14 +38,14 @@ public class PostLoader extends CursorLoader {
 
     public interface Query {
         String[] PROJECTION = {
-                PostsEntry._ID,
-                PostsEntry.COLUMN_POST_ID,
-                PostsEntry.COLUMN_TITLE,
-                PostsEntry.COLUMN_PUBLISHED,
-                PostsEntry.COLUMN_IMAGE_URI,
-                PostsEntry.COLUMN_SERVICE_POST_ID,
-                PostsEntry.COLUMN_URL,
-                PostsEntry.COLUMN_CONTENT
+                MarkerContract.PATH_POSTS + "." + PostsEntry._ID,
+                MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_POST_ID,
+                MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_TITLE,
+                MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_PUBLISHED,
+                MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_IMAGE_URI,
+                MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_SERVICE_POST_ID,
+                MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_URL,
+                MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_CONTENT
         };
 
     }

@@ -215,14 +215,13 @@ public class UpdaterService extends IntentService {
                         for (int i = 0; i < items.size(); i++) {
                             Post post = items.get(i);
 
-                            List<Post.Images> images = post.getImages();
                             ContentValues value = values[i] = new ContentValues();
                             value.put(PostsEntry.COLUMN_PUBLISHED, post.getPublished().getValue());
                             value.put(PostsEntry.COLUMN_IMAGE_URI,
                                     post.getImages() != null && post.getImages().size() > 0 ? post.getImages().get(0).getUrl() : null);
                             value.put(PostsEntry.COLUMN_TITLE, post.getTitle());
                             value.put(PostsEntry.COLUMN_SERVICE_POST_ID, post.getId());
-                            value.put(PostsEntry.COLUMN_BLOG_KEY, "TODO");
+                            value.put(PostsEntry.COLUMN_BLOG_KEY, blogItem._id);
                             value.put(PostsEntry.COLUMN_PLACE_KEY, "TODO");
                             value.put(PostsEntry.COLUMN_URL, post.getUrl());
                         }

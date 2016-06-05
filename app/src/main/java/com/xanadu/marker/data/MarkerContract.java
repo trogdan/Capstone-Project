@@ -20,6 +20,7 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.List;
 
@@ -27,6 +28,8 @@ import java.util.List;
  * Defines table and column names for the marker database.
  */
 public class MarkerContract {
+
+    private static final String TAG = "MarkerContract";
 
     // The "Content authority" is a name for the entire content provider, similar to the
     // relationship between a domain name and its website.  A convenient string to use for the
@@ -180,8 +183,14 @@ public class MarkerContract {
             return CONTENT_URI.buildUpon().appendPath(place).build();
         }
 
-        public static Uri buildPostsBlog(String blog) {
-            return CONTENT_URI.buildUpon().appendPath(blog).build();
+        public static Uri buildPostsBlog(int blogId) {
+            Uri blogUri = CONTENT_URI.buildUpon()
+                    .appendPath(PATH_BLOG)
+                    .appendPath(Integer.toString(blogId))
+                    .build();
+
+            Log.d(TAG, "Post URI: " + blogUri.toString());
+            return blogUri;
         }
 
         @Nullable
