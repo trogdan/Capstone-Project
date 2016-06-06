@@ -10,10 +10,12 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.URLUtil;
 import android.widget.EditText;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import com.xanadu.marker.data.BlogItem;
 import com.xanadu.marker.data.BlogLoader;
 import com.xanadu.marker.data.UpdaterService;
+import com.xanadu.marker.ui.BackEditText;
 import com.xanadu.marker.ui.DividerItemDecoration;
 
 /**
@@ -34,6 +37,8 @@ public class BlogsFragment
         extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String TAG = "BlogsFragment";
+
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final int BLOG_LOADER = 2;
@@ -43,6 +48,7 @@ public class BlogsFragment
     private OnListFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
     private BlogItemRecyclerViewAdapter mBlogItemAdapter;
+    private BackEditText mUrlEdit;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -81,14 +87,9 @@ public class BlogsFragment
         rootView.findViewById(R.id.add_fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText editText = (EditText)rootView.findViewById(R.id.add_url_edit);
-                if(editText.getVisibility() == View.VISIBLE)
-                {
-                    editText.setVisibility(View.INVISIBLE);
-                }
-                else {
-                    editText.setVisibility(View.VISIBLE);
-                }
+                mUrlEdit.setVisibility(View.VISIBLE);
+                mUrlEdit.setFocusableInTouchMode(true);
+                mUrlEdit.requestFocus();
                 //startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
                 //        .setType("text/plain")
                 //        .setText("Some sample text")
@@ -96,7 +97,8 @@ public class BlogsFragment
             }
         });
 
-        ((EditText)rootView.findViewById(R.id.add_url_edit)).setOnEditorActionListener(
+        mUrlEdit = (BackEditText)rootView.findViewById(R.id.add_url_edit);
+        mUrlEdit.setOnEditorActionListener(
                 new EditText.OnEditorActionListener() {
                     @Override
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -118,6 +120,7 @@ public class BlogsFragment
                                 {
                                     //Snackbar to tell user to please, try again
                                 }
+                                mUrlEdit.setVisibility(View.INVISIBLE);
                                 return true; // consume.
                             }
                         }
