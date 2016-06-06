@@ -102,6 +102,7 @@ public class MapsActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+
         Toolbar toolbar = (Toolbar)findViewById(R.id.blogs_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);

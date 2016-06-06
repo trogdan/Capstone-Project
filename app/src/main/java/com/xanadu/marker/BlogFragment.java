@@ -130,7 +130,7 @@ public class BlogFragment
                 rootView.findViewById(R.id.recyclerview_blog_empty), mBlogItem);
         mRecyclerView.setAdapter(mPostItemAdapter);
 
-        //TODO 
+        //TODO
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.blog_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
