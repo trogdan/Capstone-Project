@@ -8,6 +8,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -53,6 +54,7 @@ public class BlogFragment
     private OnListFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
     private PostItemRecyclerViewAdapter mPostItemAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public BlogFragment() {
         // Required empty public constructor
@@ -127,6 +129,16 @@ public class BlogFragment
         mPostItemAdapter = new PostItemRecyclerViewAdapter(mListener,
                 rootView.findViewById(R.id.recyclerview_blog_empty), mBlogItem);
         mRecyclerView.setAdapter(mPostItemAdapter);
+
+        //TODO 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.blog_swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        mSwipeRefreshLayout.setEnabled(false);
 
         setHasOptionsMenu(true);
 
