@@ -49,6 +49,21 @@ public class BloggerApiUtil {
         return null;
     }
 
+    public static Blog fetchBlogById(String blogId) {
+        try {
+            Blogger.Blogs.Get getter = blogs.get(blogId);
+            getter.setKey("AIzaSyAKhkqh332VCZRqOGxkXeCfQwDj5rZGCfY");
+            Blog blog = getter.execute();
+            return blog;
+            //Log.d(TAG, "Blog title: " + blog.getName());
+        } catch(IOException e)
+        {
+            Log.e(TAG, "Exception fetching blog", e);
+        }
+
+        return null;
+    }
+
     public static PostList fetchPosts(String blogId, Long maxResults, String nextPageToken)
     {
         try {

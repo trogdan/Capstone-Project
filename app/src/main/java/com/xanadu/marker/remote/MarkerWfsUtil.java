@@ -61,10 +61,10 @@ public class MarkerWfsUtil {
         try {
             Uri.Builder builder = Uri.parse(MARKER_WFS_BASE_URI).buildUpon();
 
-            ///geoserver/wfs?srsname=EPSG:4326&typename=go:place_post&version=1.0.0&request=GetFeature&service=WFS&outputFormat=json
+            ///geoserver/wfs?srsname=EPSG:4326&typename=go:place_post_blog&version=1.0.0&request=GetFeature&service=WFS&outputFormat=json
             builder.path("/geoserver/wfs");
             builder.appendQueryParameter("srsname", "EPSG:4326");
-            builder.appendQueryParameter("typename", "go:place");
+            builder.appendQueryParameter("typename", "go:place_post_blog");
             builder.appendQueryParameter("version", "1.0.0");
             builder.appendQueryParameter("request", "GetFeature");
             builder.appendQueryParameter("service", "WFS");

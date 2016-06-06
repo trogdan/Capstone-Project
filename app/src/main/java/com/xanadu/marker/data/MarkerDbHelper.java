@@ -52,26 +52,26 @@ public class MarkerDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_BLOGS_TABLE = "CREATE TABLE " + BlogsEntry.TABLE_NAME + " (" +
                 BlogsEntry._ID + " INTEGER PRIMARY KEY," +
                 BlogsEntry.COLUMN_BLOG_ID + " TEXT UNIQUE ON CONFLICT REPLACE, " +
-                BlogsEntry.COLUMN_SERVICE_BLOG_ID + " TEXT NOT NULL, " +
-                BlogsEntry.COLUMN_NAME + " TEXT NOT NULL, " +
+                BlogsEntry.COLUMN_SERVICE_BLOG_ID + " TEXT, " +
+                BlogsEntry.COLUMN_NAME + " TEXT, " +
                 BlogsEntry.COLUMN_DESC + " TEXT, " +
                 BlogsEntry.COLUMN_IMAGE_URI + " TEXT, " +
-                BlogsEntry.COLUMN_URL + " TEXT UNIQUE NOT NULL," +
-                BlogsEntry.COLUMN_LAST_UPDATED + " INTEGER NOT NULL, " +
+                BlogsEntry.COLUMN_URL + " TEXT UNIQUE," +
+                BlogsEntry.COLUMN_LAST_UPDATED + " INTEGER, " +
                 BlogsEntry.COLUMN_PREV_LAST_UPDATED + " INTEGER, " +
-                BlogsEntry.COLUMN_POST_COUNT + " INTEGER NOT NULL, " +
+                BlogsEntry.COLUMN_POST_COUNT + " INTEGER, " +
                 BlogsEntry.COLUMN_NEXT_PAGE_TOKEN + " TEXT " +
                 " );";
         final String SQL_CREATE_POSTS_TABLE = "CREATE TABLE " + PostsEntry.TABLE_NAME + " (" +
                 PostsEntry._ID + " INTEGER PRIMARY KEY," +
                 PostsEntry.COLUMN_POST_ID + " TEXT UNIQUE ON CONFLICT REPLACE, " +
-                PostsEntry.COLUMN_BLOG_KEY + " INTEGER NOT NULL, " +
-                PostsEntry.COLUMN_PLACE_KEY + " INTEGER NOT NULL, " +
-                PostsEntry.COLUMN_SERVICE_POST_ID + " TEXT NOT NULL, " +
-                PostsEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
+                PostsEntry.COLUMN_BLOG_KEY + " INTEGER, " +
+                PostsEntry.COLUMN_PLACE_KEY + " INTEGER, " +
+                PostsEntry.COLUMN_SERVICE_POST_ID + " TEXT, " +
+                PostsEntry.COLUMN_TITLE + " TEXT, " +
                 PostsEntry.COLUMN_IMAGE_URI + " TEXT, " +
-                PostsEntry.COLUMN_URL + " TEXT UNIQUE NOT NULL, " +
-                PostsEntry.COLUMN_PUBLISHED + " INTEGER NOT NULL, " +
+                PostsEntry.COLUMN_URL + " TEXT UNIQUE, " +
+                PostsEntry.COLUMN_PUBLISHED + " INTEGER, " +
                 PostsEntry.COLUMN_CONTENT + " TEXT " +
                 " );";
 

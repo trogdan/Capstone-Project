@@ -20,12 +20,9 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.util.Log;
 
 public class MarkerProvider extends ContentProvider {
 
@@ -36,27 +33,35 @@ public class MarkerProvider extends ContentProvider {
     private MarkerDbHelper mOpenHelper;
 
     static final int PLACES = 100;
+    static final int PLACES_BLOG_POST = 101;
     static final int BLOGS = 200;
     static final int POSTS = 300;
     static final int POSTS_WITH_PLACE= 301;
     static final int POSTS_WITH_BLOG= 302;
     static final int POSTS_WITH_POST= 303;
 
-    private static final SQLiteQueryBuilder sPostsByPlaceQueryBuilder;
+    private static final SQLiteQueryBuilder sBlogPostsByPlaceQueryBuilder;
     private static final SQLiteQueryBuilder sPostsByBlogQueryBuilder;
+    private static final SQLiteQueryBuilder sPlacesWithBlogPostBuilder;
 
     static{
-        sPostsByPlaceQueryBuilder = new SQLiteQueryBuilder();
+        sBlogPostsByPlaceQueryBuilder = new SQLiteQueryBuilder();
         
         //This is an inner join which looks like
-        //posts INNER JOIN places ON posts.place_key = places._id
-        sPostsByPlaceQueryBuilder.setTables(
+        //posts INNER JOIN places ON posts.place_key = places._id  AND
+        //      INNER JOIN blogs ON posts.blog_key = blogs._id
+        sBlogPostsByPlaceQueryBuilder.setTables(
                 MarkerContract.PostsEntry.TABLE_NAME + " INNER JOIN " +
                         MarkerContract.PlacesEntry.TABLE_NAME +
                         " ON " + MarkerContract.PostsEntry.TABLE_NAME +
                         "." + MarkerContract.PostsEntry.COLUMN_PLACE_KEY +
                         " = " + MarkerContract.PlacesEntry.TABLE_NAME +
-                        "." + MarkerContract.PlacesEntry._ID);
+                        "." + MarkerContract.PlacesEntry._ID + " INNER JOIN " +
+                        MarkerContract.BlogsEntry.TABLE_NAME +
+                        " ON " + MarkerContract.PostsEntry.TABLE_NAME +
+                        "." + MarkerContract.PostsEntry.COLUMN_PLACE_KEY +
+                        " = " + MarkerContract.BlogsEntry.TABLE_NAME +
+                        "." + MarkerContract.BlogsEntry._ID);
 
         sPostsByBlogQueryBuilder = new SQLiteQueryBuilder();
 
@@ -70,6 +75,18 @@ public class MarkerProvider extends ContentProvider {
                         " = " + MarkerContract.BlogsEntry.TABLE_NAME +
                         "." + MarkerContract.BlogsEntry._ID);
 
+        sPlacesWithBlogPostBuilder = new SQLiteQueryBuilder();
+
+        //This is an inner join which looks like
+        //places INNER JOIN blogs ON posts.service_post_id = places._id  AND
+        //      INNER JOIN blogs ON posts.blog_key = blogs._id
+        sPlacesWithBlogPostBuilder.setTables(
+                MarkerContract.PostsEntry.TABLE_NAME + " INNER JOIN " +
+                        MarkerContract.BlogsEntry.TABLE_NAME +
+                        " ON " + MarkerContract.PostsEntry.TABLE_NAME +
+                        "." + MarkerContract.PostsEntry.COLUMN_BLOG_KEY +
+                        " = " + MarkerContract.BlogsEntry.TABLE_NAME +
+                        "." + MarkerContract.BlogsEntry._ID);
     }
 
     //places.place_id = ?
@@ -77,7 +94,7 @@ public class MarkerProvider extends ContentProvider {
             MarkerContract.PlacesEntry.TABLE_NAME+
                     "." + MarkerContract.PlacesEntry._ID + " = ? ";
 
-    //blogs.blog_id = ?
+    //blogs.service_blog_id = ?
     private static final String sBlogIdSelection =
             MarkerContract.BlogsEntry.TABLE_NAME+
                     "." + MarkerContract.BlogsEntry._ID + " = ? ";
@@ -87,13 +104,13 @@ public class MarkerProvider extends ContentProvider {
             MarkerContract.PostsEntry.TABLE_NAME+
                     "." + MarkerContract.PostsEntry._ID + " = ? ";
 
-    private Cursor getPostsByPlace(Uri uri, String[] projection, String sortOrder) {
+    private Cursor getBlogPostsByPlace(Uri uri, String[] projection, String sortOrder) {
         String placeIdFromUri = MarkerContract.PostsEntry.getPlaceFromUri(uri);
 
         String[] selectionArgs = new String[]{placeIdFromUri};
         String selection = sPlaceIdSelection;
 
-        return sPostsByPlaceQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+        return sBlogPostsByPlaceQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 selection,
                 selectionArgs,
@@ -200,7 +217,7 @@ public class MarkerProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             // "posts/place/*"
             case POSTS_WITH_PLACE: {
-                retCursor = getPostsByPlace(uri, projection, sortOrder);
+                retCursor = getBlogPostsByPlace(uri, projection, sortOrder);
                 break;
             }
             // "posts/blog/*"
@@ -211,6 +228,19 @@ public class MarkerProvider extends ContentProvider {
             // "posts/*"
             case POSTS_WITH_POST: {
                 retCursor = getPostsByPost(uri, projection, sortOrder);
+                break;
+            }
+            // "places/blog/post" returns the blog_id and post_id
+            case PLACES_BLOG_POST: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MarkerContract.PlacesEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
                 break;
             }
             // "places"

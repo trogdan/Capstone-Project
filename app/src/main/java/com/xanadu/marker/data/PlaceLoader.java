@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 
 import com.xanadu.marker.data.MarkerContract.PlacesEntry;
+import com.xanadu.marker.data.MarkerContract.BlogsEntry;
+import com.xanadu.marker.data.MarkerContract.PostsEntry;
 
 /**
  * Helper for loading a list of places or a single place.
@@ -13,7 +15,9 @@ public class PlaceLoader extends CursorLoader {
     public static PlaceLoader newAllPlacesInstance(Context context) {
         return new PlaceLoader(context, PlacesEntry.CONTENT_URI);
     }
-
+    public static PlaceLoader newAllPlacesBlogPostInstance(Context context) {
+        return new PlaceLoader(context, PlacesEntry.buildPlacesBlogPostUri());
+    }
     public static PlaceLoader newInstanceForItemId(Context context, long itemId) {
         return new PlaceLoader(context, PlacesEntry.buildPlacesUri(itemId));
     }
@@ -30,7 +34,9 @@ public class PlaceLoader extends CursorLoader {
                 PlacesEntry.COLUMN_ABOUT,
                 PlacesEntry.COLUMN_COORD_LAT,
                 PlacesEntry.COLUMN_COORD_LONG,
-                PlacesEntry.COLUMN_GOO_ID
+                PlacesEntry.COLUMN_GOO_ID,
+                //BlogsEntry.COLUMN_BLOG_ID,
+                //PostsEntry.COLUMN_POST_ID
         };
 
         int _ID = 0;
@@ -40,7 +46,7 @@ public class PlaceLoader extends CursorLoader {
         int COLUMN_COORD_LAT = 4;
         int COLUMN_COORD_LONG = 5;
         int COLUMN_GOO_ID = 6;
+        int COLUMN_BLOG_ID = 7;
+        int COLUMN_POST_ID = 8;
     }
-
-
 }

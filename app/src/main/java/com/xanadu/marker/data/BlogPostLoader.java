@@ -5,11 +5,14 @@ import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 
 import com.xanadu.marker.data.MarkerContract.PostsEntry;
+import com.xanadu.marker.data.MarkerContract.BlogsEntry;
 
 /**
- * Helper for loading a list of places or a single place.
+ * Helper for loading a list of posts with some blog data
  */
-public class PostLoader extends CursorLoader {
+public class BlogPostLoader extends CursorLoader {
+
+    public static final String LOADER_ARG_PLACE_ID = "place_id";
 
     public static final int _ID = 0;
     public static final int COLUMN_POST_ID = 1;
@@ -19,23 +22,14 @@ public class PostLoader extends CursorLoader {
     public static final int COLUMN_SERVICE_POST_ID = 5;
     public static final int COLUMN_URL = 6;
     public static final int COLUMN_CONTENT = 7;
+    public static final int COLUMN_BLOG_ID = 8;
+    public static final int COLUMN_BLOG_NAME = 9;
 
-    public static PostLoader newAllPostsInstance(Context context) {
-        return new PostLoader(context, PostsEntry.CONTENT_URI);
+    public static BlogPostLoader newBlogPostsByPlace(Context context, int placeId) {
+        return new BlogPostLoader(context, PostsEntry.buildPostsPlace(placeId));
     }
 
-    public static PostLoader newBlogPostsInstance(Context context, int blogId) {
-        return new PostLoader(context, PostsEntry.buildPostsBlog(blogId));
-    }
-    public static PostLoader newPlacePostsInstance(Context context, int placeId) {
-        return new PostLoader(context, PostsEntry.buildPostsPlace(placeId));
-    }
-
-    public static PostLoader newInstanceForItemId(Context context, long itemId) {
-        return new PostLoader(context, PostsEntry.buildPostsUri(itemId));
-    }
-
-    private PostLoader(Context context, Uri uri) {
+    private BlogPostLoader(Context context, Uri uri) {
         super(context, uri, Query.PROJECTION, null, null, null);
     }
 
@@ -48,10 +42,9 @@ public class PostLoader extends CursorLoader {
                 MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_IMAGE_URI,
                 MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_SERVICE_POST_ID,
                 MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_URL,
-                MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_CONTENT
+                MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_CONTENT,
+                MarkerContract.PATH_BLOGS + "." + BlogsEntry._ID,
+                MarkerContract.PATH_BLOGS + "." + BlogsEntry.COLUMN_NAME
         };
-
     }
-
-
 }

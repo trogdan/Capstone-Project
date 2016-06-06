@@ -34,4 +34,5 @@ dependencies {
     compile 'com.cocoahero.android:geojson:1.0.1'
     compile 'com.github.markomilos:paginate:0.5.1'
     compile 'com.google.apis:google-api-services-blogger:v3-rev52-1.22.0'
+    compile 'com.sothree.slidinguppanel:library:3.3.0'
 }

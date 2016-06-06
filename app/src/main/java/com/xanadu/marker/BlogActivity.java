@@ -1,10 +1,14 @@
 package com.xanadu.marker;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompatSideChannelService;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
+import android.transition.Slide;
+import android.transition.Transition;
 
 
 import com.xanadu.marker.data.BlogItem;
@@ -19,9 +23,11 @@ public class BlogActivity extends AppCompatActivity implements BlogFragment.OnLi
     private BlogItem mBlogItem;
 
     @Override
+    @TargetApi(21)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blog);
+
 
         if (savedInstanceState == null) {
             // Create the blog fragment and add it to the activity

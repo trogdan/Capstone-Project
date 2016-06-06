@@ -28,6 +28,7 @@ import com.xanadu.marker.data.MarkerContract.PostsEntry;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UpdaterService extends IntentService {
@@ -50,6 +51,8 @@ public class UpdaterService extends IntentService {
     public static final String EXTRA_BLOGGER_POST_UPDATE
             = "com.xanadu.marker.intent.extra.BLOGGER_POST_UPDATE";
 
+    public static final String EXTRA_BLOGGER_BLOG_POST_UPDATE
+            = "com.xanadu.marker.intent.extra.BLOGGER_BLOG_POST_UPDATE";
 
     public UpdaterService() {
         super(TAG);
@@ -88,6 +91,7 @@ public class UpdaterService extends IntentService {
                 ContentValues[] values = new ContentValues[features.size()];
 
                 //Parse and Pass the results to the content provider
+                // TODO inefficient if multiple places of the same id
                 for (int i = 0; i < features.size(); i++) {
                     Feature feature = features.get(i);
 
@@ -110,6 +114,38 @@ public class UpdaterService extends IntentService {
                     value.put(PlacesEntry.COLUMN_COORD_LONG, positions.get(0).getLongitude());
                     value.put(PlacesEntry.COLUMN_NAME, properties.getString(MarkerContract.MARKER_DB_PLACE_NAME));
                     value.put(PlacesEntry.COLUMN_ABOUT, properties.getString(MarkerContract.MARKER_DB_PLACE_ABOUT));
+
+                    // blog
+                    Cursor blogCursor = getContentResolver().query(
+                            MarkerContract.BlogsEntry.CONTENT_URI,
+                            new String[] { BlogsEntry._ID },
+                            BlogsEntry.COLUMN_SERVICE_BLOG_ID + " = ?",
+                            new String[]{properties.getString(MarkerContract.MARKER_DB_BLOG_BLOG_ID)},
+                            null);
+
+                    if (blogCursor.getCount() != 1) {
+                        // add it
+                        value = new ContentValues();
+                        value.put(BlogsEntry.COLUMN_SERVICE_BLOG_ID, properties.getString(MarkerContract.MARKER_DB_BLOG_BLOG_ID));
+                        value.put(BlogsEntry.COLUMN_BLOG_ID, properties.getString(MarkerContract.MARKER_DB_BLOG_BLOG_ID));
+                        getContentResolver().insert(BlogsEntry.CONTENT_URI, value);
+                    }
+
+                    // post
+                    Cursor postCursor = getContentResolver().query(
+                            MarkerContract.PostsEntry.CONTENT_URI,
+                            new String[] { PostsEntry._ID },
+                            PostsEntry.COLUMN_SERVICE_POST_ID + " = ?",
+                            new String[]{properties.getString(MarkerContract.MARKER_DB_POST_POST_ID)},
+                            null);
+
+                    if (postCursor.getCount() != 1) {
+                        // add it
+                        value = new ContentValues();
+                        value.put(PostsEntry.COLUMN_SERVICE_POST_ID, properties.getString(MarkerContract.MARKER_DB_POST_POST_ID));
+                        value.put(PostsEntry.COLUMN_POST_ID, properties.getString(MarkerContract.MARKER_DB_POST_POST_ID));
+                        getContentResolver().insert(PostsEntry.CONTENT_URI, value);
+                    }
                 }
 
                 getContentResolver().bulkInsert(PlacesEntry.CONTENT_URI, values);
@@ -123,63 +159,7 @@ public class UpdaterService extends IntentService {
             Blog blog = BloggerApiUtil.fetchBlog(url);
 
             if (blog != null) {
-
-                // First, check if the this id exists, and get the last updated time,
-                // and see if it's different than this time
-                Cursor blogCursor = getContentResolver().query(
-                        MarkerContract.BlogsEntry.CONTENT_URI,
-                        new String[] { BlogsEntry.COLUMN_LAST_UPDATED },
-                        MarkerContract.BlogsEntry.COLUMN_SERVICE_BLOG_ID + " = ?",
-                        new String[]{blog.getId()},
-                        null);
-
-                // We should only have one
-                if (blogCursor.getCount() == 1) {
-                    // OK, this blog is already in the DB, check the last update time, to see if we need to
-                    // update the record
-                    blogCursor.moveToNext();
-                    long lastUpdateTime = blogCursor.getInt(0);
-
-                    if (lastUpdateTime != blog.getUpdated().getValue()) {
-                        // is it different, if so, update columns that may have changed, and set the previous
-                        // last update time
-                        ContentValues value = new ContentValues();
-
-                        value.put(BlogsEntry.COLUMN_SERVICE_BLOG_ID, blog.getId());
-                        value.put(BlogsEntry.COLUMN_URL, blog.getUrl());
-                        value.put(BlogsEntry.COLUMN_NAME, blog.getName());
-                        value.put(BlogsEntry.COLUMN_NAME, blog.getDescription());
-                        value.put(BlogsEntry.COLUMN_LAST_UPDATED, blog.getUpdated().getValue());
-                        value.put(BlogsEntry.COLUMN_PREV_LAST_UPDATED, lastUpdateTime);
-                        value.put(BlogsEntry.COLUMN_POST_COUNT, blog.getPosts().size());
-                        //TODO other fields
-
-                        getContentResolver().update(BlogsEntry.CONTENT_URI,
-                                value,
-                                MarkerContract.BlogsEntry.COLUMN_SERVICE_BLOG_ID + " = ?",
-                                new String[]{blog.getId()});
-                    }
-                    // is it the same? if so, don't bother
-
-                }
-                else if (blogCursor.getCount() > 1) {
-                    Log.e(TAG, "Found duplicate service_blog_id: {" + blog.getId() + "}");
-                }
-                else {
-                    ContentValues value = new ContentValues();
-
-                    value.put(BlogsEntry.COLUMN_SERVICE_BLOG_ID, blog.getId());
-                    value.put(BlogsEntry.COLUMN_URL, blog.getUrl());
-                    value.put(BlogsEntry.COLUMN_NAME, blog.getName());
-                    value.put(BlogsEntry.COLUMN_DESC, blog.getDescription());
-                    value.put(BlogsEntry.COLUMN_LAST_UPDATED, blog.getUpdated().getValue());
-                    Log.d(TAG, "Received updated time " + blog.getUpdated().getValue());
-                    value.put(BlogsEntry.COLUMN_POST_COUNT, blog.getPosts().getTotalItems().intValue());
-                    //TODO other fields
-
-                    getContentResolver().insert(BlogsEntry.CONTENT_URI, value);
-                }
-
+                updateProviderBlogs(blog);
             }
             else
             {
@@ -222,9 +202,11 @@ public class UpdaterService extends IntentService {
                                             post.getImages().get(0).getUrl() : null);
                             value.put(PostsEntry.COLUMN_TITLE, post.getTitle());
                             value.put(PostsEntry.COLUMN_SERVICE_POST_ID, post.getId());
+                            value.put(PostsEntry.COLUMN_POST_ID, post.getId());
                             value.put(PostsEntry.COLUMN_BLOG_KEY, blogItem._id);
                             value.put(PostsEntry.COLUMN_PLACE_KEY, "TODO"); //TODO
                             value.put(PostsEntry.COLUMN_URL, post.getUrl());
+
                         }
                         getContentResolver().bulkInsert(PostsEntry.CONTENT_URI, values);
                     }
@@ -273,7 +255,123 @@ public class UpdaterService extends IntentService {
                     }
                 }
             }
+            else if (intent.hasExtra(EXTRA_BLOGGER_BLOG_POST_UPDATE))
+            {
+                ArrayList<BlogPostQuery> queryList = intent.getParcelableExtra(EXTRA_BLOGGER_BLOG_POST_UPDATE);
+
+                for(BlogPostQuery query : queryList)
+                {
+                    Blog blog = BloggerApiUtil.fetchBlogById(query.service_blog_id);
+
+                    if (blog != null)
+                    {
+                        // Update blog first, because technically this is a post query
+                        updateProviderBlogs(blog);
+
+                        // Get the _id of the blog so we can add it to the post
+                        Cursor blogCursor = getContentResolver().query(
+                                MarkerContract.BlogsEntry.CONTENT_URI,
+                                new String[] { BlogsEntry._ID },
+                                MarkerContract.BlogsEntry.COLUMN_SERVICE_BLOG_ID + " = ?",
+                                new String[]{blog.getId()},
+                                null);
+
+                        // We should only have one
+                        int blog_id = 0;
+                        if (blogCursor.getCount() == 1) {
+                            blogCursor.moveToNext();
+                            blog_id = blogCursor.getInt(0);
+                        }
+
+                        Post post = BloggerApiUtil.fetchPost(query.service_blog_id, query.service_post_id);
+                        if (post != null)
+                        {
+                            ContentValues value = new ContentValues();
+                            value.put(PostsEntry.COLUMN_PUBLISHED, post.getPublished().getValue());
+                            value.put(PostsEntry.COLUMN_IMAGE_URI,
+                                    post.getImages() != null && post.getImages().size() > 0 ?
+                                            post.getImages().get(0).getUrl() : null);
+                            value.put(PostsEntry.COLUMN_TITLE, post.getTitle());
+                            value.put(PostsEntry.COLUMN_SERVICE_POST_ID, post.getId());
+                            value.put(PostsEntry.COLUMN_POST_ID, post.getId());
+                            value.put(PostsEntry.COLUMN_BLOG_KEY, blog_id);
+                            value.put(PostsEntry.COLUMN_PLACE_KEY, "TODO"); //TODO
+                            value.put(PostsEntry.COLUMN_URL, post.getUrl());
+
+                            getContentResolver().insert(PostsEntry.CONTENT_URI, value);
+                        }
+                        else
+                        {
+                            Log.i(TAG, "Failed to find post for id: " + query.service_post_id);
+                        }
+                    }
+                    else
+                    {
+                        Log.i(TAG, "Failed to find blog for id: " + query.service_blog_id);
+                    }
+                }
+            }
         }
     }
 
+    private void updateProviderBlogs(Blog blog)
+    {
+        // First, check if the this id exists, and get the last updated time,
+        // and see if it's different than this time
+        Cursor blogCursor = getContentResolver().query(
+                MarkerContract.BlogsEntry.CONTENT_URI,
+                new String[] { BlogsEntry.COLUMN_LAST_UPDATED },
+                MarkerContract.BlogsEntry.COLUMN_SERVICE_BLOG_ID + " = ?",
+                new String[]{blog.getId()},
+                null);
+
+        // We should only have one
+        if (blogCursor.getCount() == 1) {
+            // OK, this blog is already in the DB, check the last update time, to see if we need to
+            // update the record
+            blogCursor.moveToNext();
+            long lastUpdateTime = blogCursor.getInt(0);
+
+            if (lastUpdateTime != blog.getUpdated().getValue()) {
+                // is it different, if so, update columns that may have changed, and set the previous
+                // last update time
+                ContentValues value = new ContentValues();
+
+                value.put(BlogsEntry.COLUMN_SERVICE_BLOG_ID, blog.getId());
+                value.put(BlogsEntry.COLUMN_BLOG_ID, blog.getId());
+                value.put(BlogsEntry.COLUMN_URL, blog.getUrl());
+                value.put(BlogsEntry.COLUMN_NAME, blog.getName());
+                value.put(BlogsEntry.COLUMN_NAME, blog.getDescription());
+                value.put(BlogsEntry.COLUMN_LAST_UPDATED, blog.getUpdated().getValue());
+                value.put(BlogsEntry.COLUMN_PREV_LAST_UPDATED, lastUpdateTime);
+                value.put(BlogsEntry.COLUMN_POST_COUNT, blog.getPosts().size());
+                //TODO other fields
+
+                getContentResolver().update(BlogsEntry.CONTENT_URI,
+                        value,
+                        MarkerContract.BlogsEntry.COLUMN_SERVICE_BLOG_ID + " = ?",
+                        new String[]{blog.getId()});
+            }
+            // is it the same? if so, don't bother
+
+        }
+        else if (blogCursor.getCount() > 1) {
+            Log.e(TAG, "Found duplicate service_blog_id: {" + blog.getId() + "}");
+        }
+        else {
+            ContentValues value = new ContentValues();
+
+            value.put(BlogsEntry.COLUMN_SERVICE_BLOG_ID, blog.getId());
+            value.put(BlogsEntry.COLUMN_BLOG_ID, blog.getId());
+            value.put(BlogsEntry.COLUMN_URL, blog.getUrl());
+            value.put(BlogsEntry.COLUMN_NAME, blog.getName());
+            value.put(BlogsEntry.COLUMN_DESC, blog.getDescription());
+            value.put(BlogsEntry.COLUMN_LAST_UPDATED, blog.getUpdated().getValue());
+            //Log.d(TAG, "Received updated time " + blog.getUpdated().getValue());
+            value.put(BlogsEntry.COLUMN_POST_COUNT, blog.getPosts().getTotalItems().intValue());
+            //TODO other fields
+
+            getContentResolver().insert(BlogsEntry.CONTENT_URI, value);
+        }
+    }
 }

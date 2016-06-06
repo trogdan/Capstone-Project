@@ -120,8 +120,8 @@ public class PostFragment
         });
         mWebView.loadUrl(mPostItem.uri);
 
-    // TODO webview is a pain! downside of the above is that navigation of a site like Blogger allows the
-        //user to switch to a different blog entry, thus providing inconsistencies
+        // TODO webview is a pain! downside of the above is that navigation of a site like Blogger allows the
+        // user to switch to a different blog entry, thus providing inconsistencies
 //        Intent requestIntent = new Intent(getActivity(), UpdaterService.class);
 //        requestIntent.putExtra(UpdaterService.EXTRA_BLOGGER_POST_UPDATE, mPostItem);
 //        getActivity().startService(requestIntent);
