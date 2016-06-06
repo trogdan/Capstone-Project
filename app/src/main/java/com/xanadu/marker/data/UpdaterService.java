@@ -65,9 +65,6 @@ public class UpdaterService extends IntentService {
             return;
         }
 
-        sendStickyBroadcast(
-                new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, true));
-
         if (intent.hasExtra(EXTRA_WFS_QUERY_BOX)) {
             // Delete all items
             getContentResolver().delete(PlacesEntry.CONTENT_URI, null, null);
@@ -277,9 +274,6 @@ public class UpdaterService extends IntentService {
                 }
             }
         }
-
-        sendStickyBroadcast(
-                new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, false));
     }
 
 }
