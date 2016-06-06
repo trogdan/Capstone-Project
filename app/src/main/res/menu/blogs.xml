@@ -1,26 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.android.sunshine.mobile.MainActivity" >
+<menu/>
 
-    <item android:id="@+id/action_search"
-        android:title="@string/action_search"
-        android:icon="@drawable/ic_search_white"
-        android:orderInCategory="10"
-        app:showAsAction="always"/>
-
-<!--
-    <item android:id="@+id/action_maps"
-        android:title="@string/action_maps"
-        android:icon="@drawable/ic_public_white"
-        android:orderInCategory="20"
-        app:showAsAction="always"/>
-
-        <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
--->
-</menu>

@@ -14,6 +14,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -92,6 +95,7 @@ public class BlogFragment
         View rootView = inflater.inflate(R.layout.fragment_blog, container, false);
 
         final Toolbar toolbar = (Toolbar)rootView.findViewById(R.id.blog_toolbar);
+
         AppCompatActivity appCompatActivity = (AppCompatActivity)getActivity();
         appCompatActivity.setSupportActionBar(toolbar);
         appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -124,15 +128,29 @@ public class BlogFragment
                 rootView.findViewById(R.id.recyclerview_blog_empty), mBlogItem);
         mRecyclerView.setAdapter(mPostItemAdapter);
 
+        setHasOptionsMenu(true);
+
         setupPagination();
 
         return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(PostItem item) {
-        if (mListener != null) {
-            mListener.onListFragmentInteraction(item);
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_blog, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Handle action buttons
+        switch(item.getItemId()) {
+            //noinspection SimplifiableIfStatement
+            case R.id.action_blog_share:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

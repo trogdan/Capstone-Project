@@ -3,6 +3,7 @@ package com.xanadu.marker;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -10,7 +11,11 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -21,6 +26,9 @@ import com.xanadu.marker.data.PostItem;
 import com.xanadu.marker.data.PostLoader;
 import com.xanadu.marker.data.UpdaterService;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -28,12 +36,12 @@ public class PostFragment
         extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor>
 {
-
     private static final String TAG = "PostFragment";
-
     private static final String ARG_POST_ITEM = "post_item";
-
-    private static final int POST_VIEW_LOADER = 4;
+//    private static final int POST_VIEW_LOADER = 4;
+//
+//    private final SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("EEE, MMM d, yyyy",
+//            java.util.Locale.getDefault());
 
     private PostItem mPostItem;
     private WebView mWebView;
@@ -63,17 +71,42 @@ public class PostFragment
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_post, container, false);
 
+
         final Toolbar toolbar = (Toolbar)rootView.findViewById(R.id.post_toolbar);
         toolbar.setTitle("");
-        final AppCompatActivity appCompatActivity = (AppCompatActivity)getActivity();
-        appCompatActivity.setSupportActionBar(toolbar);
-        appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) rootView.findViewById(R.id.post_collapsing_toolbar);
         collapsingToolbar.setTitle("");
-        collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
-        collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+//        collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
+//        collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+
+        final AppCompatActivity appCompatActivity = (AppCompatActivity)getActivity();
+        appCompatActivity.setSupportActionBar(toolbar);
+        appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // TODO, eventually, displaying map views as an option in the collapsing toolbar
+//        final AppBarLayout appBarLayout =
+//                (AppBarLayout) rootView.findViewById(R.id.post_appbar);
+//        //appBarLayout.setExpanded(false);
+//        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+//            boolean isShow = false;
+//            int scrollRange = -1;
+//
+//            @Override
+//            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+//                if (scrollRange == -1) {
+//                    scrollRange = appBarLayout.getTotalScrollRange();
+//                }
+//                if (scrollRange + verticalOffset == 0) {
+//                    collapsingToolbar.setTitle("");
+//                    isShow = true;
+//                } else if(isShow) {
+//                    collapsingToolbar.setTitle(mSimpleDateFormat.format(new Date(mPostItem.published)));
+//                    isShow = false;
+//                }
+//            }
+//        });
 
         mWebView = (WebView) rootView.findViewById(R.id.post_webview);
         mWebView.getSettings().setJavaScriptEnabled(true);
@@ -93,7 +126,32 @@ public class PostFragment
 //        requestIntent.putExtra(UpdaterService.EXTRA_BLOGGER_POST_UPDATE, mPostItem);
 //        getActivity().startService(requestIntent);
 
+        setHasOptionsMenu(true);
+
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_post, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Handle action buttons
+        switch(item.getItemId()) {
+            //noinspection SimplifiableIfStatement
+            case R.id.action_post_map:
+                Log.d(TAG, "Received map menu action");
+                return true;
+            case R.id.action_post_share:
+                Log.d(TAG, "Received share menu action");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

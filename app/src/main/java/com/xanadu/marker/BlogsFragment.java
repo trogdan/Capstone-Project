@@ -9,6 +9,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,6 +75,8 @@ public class BlogsFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_blogs, container, false);
+        final Toolbar toolbar = (Toolbar)rootView.findViewById(R.id.blogs_toolbar);
+        toolbar.setTitleTextAppearance(getContext(), R.style.ExpandedAppBar);
 
         rootView.findViewById(R.id.add_fab).setOnClickListener(new View.OnClickListener() {
             @Override
