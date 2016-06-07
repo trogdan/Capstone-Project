@@ -316,6 +316,12 @@ public class MapsActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        // Location may have come up before map was ready, reset it here
+        if (mLatestLocation != null) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(mLatestLocation.getLatitude(), mLatestLocation.getLongitude()), 10));
+        }
+
         mMap.setOnMarkerClickListener(this);
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
@@ -357,8 +363,12 @@ public class MapsActivity
 
         mLatestLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(mLatestLocation.getLatitude(), mLatestLocation.getLongitude()), 10));
+        if (mLatestLocation != null)
+        {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(mLatestLocation.getLatitude(), mLatestLocation.getLongitude()), 10));
+        }
+
     }
 
     @Override

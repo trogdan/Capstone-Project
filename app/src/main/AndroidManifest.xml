@@ -75,6 +75,21 @@
         <service
             android:name=".data.UpdaterService"
             android:exported="false" />
+
+        <service android:name=".widget.LatestPostWidgetIntentService" />
+        <receiver
+            android:name=".widget.LatestPostWidgetProvider"
+            android:enabled="@bool/widget_latest_enabled"
+            android:label="@string/title_widget_latest_post">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.xanadu.marker.app.ACTION_DATA_UPDATED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_latest_post" />
+        </receiver>
     </application>
 
 </manifest>

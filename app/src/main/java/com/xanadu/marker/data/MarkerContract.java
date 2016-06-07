@@ -48,6 +48,7 @@ public class MarkerContract {
     public static final String PATH_PLACE = "place";
     public static final String PATH_BLOG = "blog";
     public static final String PATH_POST = "post";
+    public static final String PATH_LAST = "last";
 
     public static final String MARKER_DB_PLACE_PLACE_ID = "place_id";
     public static final String MARKER_DB_PLACE_GOO_ID = "goo_id";
@@ -189,7 +190,7 @@ public class MarkerContract {
                     .appendPath(Integer.toString(placeId))
                     .build();
 
-            Log.d(TAG, "Post URI: " + placeUri.toString());
+            //Log.d(TAG, "Post URI: " + placeUri.toString());
             return placeUri;
         }
 
@@ -199,7 +200,16 @@ public class MarkerContract {
                     .appendPath(Integer.toString(blogId))
                     .build();
 
-            Log.d(TAG, "Post URI: " + blogUri.toString());
+            //Log.d(TAG, "Post URI: " + blogUri.toString());
+            return blogUri;
+        }
+        public static Uri buildPostBlogLast() {
+            Uri blogUri = CONTENT_URI.buildUpon()
+                    .appendPath(PATH_BLOG)
+                    .appendPath(PATH_LAST)
+                    .build();
+
+            //Log.d(TAG, "Blog URI: " + blogUri.toString());
             return blogUri;
         }
 

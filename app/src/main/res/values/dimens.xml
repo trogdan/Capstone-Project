@@ -43,4 +43,12 @@
 
     <item name="blog_body_line_spacing_multiplier" format="float" type="fraction">1.25</item>
 
+    <!-- Today Widget -->
+    <dimen name="widget_last_post_default_width">250dp</dimen>
+    <dimen name="widget_last_post_default_height">40dp</dimen>
+    <dimen name="widget_last_post_min_resize_width">@dimen/widget_last_post_default_width</dimen>
+    <dimen name="widget_last_post_min_resize_height">@dimen/widget_last_post_default_height</dimen>
+    <dimen name="widget_last_text_margin_side">8dp</dimen>
+    <dimen name="widget_last_text_margin">2dp</dimen>
+
 </resources>

@@ -2,18 +2,19 @@
 <android.support.v7.widget.GridLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/blog_list_item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:columnCount="4"
     app:rowCount="3">
 
     <ImageView
+        android:id="@+id/blog_list_item_thumbnail"
         android:layout_width="@dimen/blogs_thumbnail_height"
         android:layout_height="@dimen/blogs_thumbnail_height"
         android:layout_marginLeft="4dp"
         android:layout_marginTop="@dimen/blogs_thumbnail_margin"
         android:layout_marginBottom="@dimen/blogs_thumbnail_margin"
-        android:id="@+id/blog_list_item_thumbnail"
         app:layout_row="0"
         app:layout_rowSpan="3"
         app:layout_column="0"

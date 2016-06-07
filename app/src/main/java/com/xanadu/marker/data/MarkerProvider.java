@@ -38,7 +38,8 @@ public class MarkerProvider extends ContentProvider {
     static final int POSTS = 300;
     static final int POSTS_WITH_PLACE= 301;
     static final int POSTS_WITH_BLOG= 302;
-    static final int POSTS_WITH_POST= 303;
+    static final int POST_WITH_POST = 303;
+    static final int POST_WITH_BLOG_LAST= 304;
 
     private static final SQLiteQueryBuilder sBlogPostsByPlaceQueryBuilder;
     private static final SQLiteQueryBuilder sPostsByBlogQueryBuilder;
@@ -104,6 +105,11 @@ public class MarkerProvider extends ContentProvider {
             MarkerContract.PostsEntry.TABLE_NAME+
                     "." + MarkerContract.PostsEntry._ID + " = ? ";
 
+    //MAX(posts.published)
+    private static final String sPostLatestSelection =
+            "MAX(" + MarkerContract.PostsEntry.TABLE_NAME+
+                    "." + MarkerContract.PostsEntry._ID + ")";
+
     private Cursor getBlogPostsByPlace(Uri uri, String[] projection, String sortOrder) {
         String placeIdFromUri = MarkerContract.PostsEntry.getPlaceFromUri(uri);
 
@@ -135,6 +141,19 @@ public class MarkerProvider extends ContentProvider {
                 sortOrder
         );
     }
+
+    private Cursor getLastPostWithBlog(String[] projection, String sortOrder) {
+
+        return sPostsByBlogQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                "published=(SELECT MAX(published) FROM posts)",
+                null,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
     private Cursor getPostsByPost(Uri uri, String[] projection, String sortOrder) {
         String postFromUri = MarkerContract.PostsEntry.getPostFromUri(uri);
 
@@ -167,12 +186,13 @@ public class MarkerProvider extends ContentProvider {
         matcher.addURI(authority, MarkerContract.PATH_BLOGS, BLOGS);
         matcher.addURI(authority, MarkerContract.PATH_POSTS, POSTS);
         matcher.addURI(authority, MarkerContract.PATH_POSTS + "/#",
-                POSTS_WITH_POST);
+                POST_WITH_POST);
         matcher.addURI(authority, MarkerContract.PATH_POSTS + "/" +
                 MarkerContract.PATH_PLACE + "/#", POSTS_WITH_PLACE);
-
-        String postsWithBlog = MarkerContract.PATH_POSTS + "/" + MarkerContract.PATH_BLOG + "/#";
-        matcher.addURI(authority, postsWithBlog, POSTS_WITH_BLOG);
+        matcher.addURI(authority, MarkerContract.PATH_POSTS + "/" +
+                MarkerContract.PATH_BLOG + "/#", POSTS_WITH_BLOG);
+        matcher.addURI(authority, MarkerContract.PATH_POSTS + "/" +
+                MarkerContract.PATH_BLOG + "/" + MarkerContract.PATH_LAST, POST_WITH_BLOG_LAST);
 
         return matcher;
     }
@@ -195,7 +215,9 @@ public class MarkerProvider extends ContentProvider {
                 return MarkerContract.PostsEntry.CONTENT_TYPE;
             case POSTS_WITH_BLOG:
                 return MarkerContract.PostsEntry.CONTENT_TYPE;
-            case POSTS_WITH_POST:
+            case POST_WITH_POST:
+                return MarkerContract.PostsEntry.CONTENT_ITEM_TYPE;
+            case POST_WITH_BLOG_LAST:
                 return MarkerContract.PostsEntry.CONTENT_ITEM_TYPE;
             case PLACES:
                 return MarkerContract.PlacesEntry.CONTENT_TYPE;
@@ -215,18 +237,23 @@ public class MarkerProvider extends ContentProvider {
         // and query the database accordingly.
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
-            // "posts/place/*"
+            // "posts/place/#"
             case POSTS_WITH_PLACE: {
                 retCursor = getBlogPostsByPlace(uri, projection, sortOrder);
                 break;
             }
-            // "posts/blog/*"
+            // "posts/blog/#"
             case POSTS_WITH_BLOG: {
                 retCursor = getPostsByBlog(uri, projection, sortOrder);
                 break;
             }
-            // "posts/*"
-            case POSTS_WITH_POST: {
+            // "posts/blog/last"
+            case POST_WITH_BLOG_LAST: {
+                retCursor = getLastPostWithBlog(projection, sortOrder);
+                break;
+            }
+            // "posts/#"
+            case POST_WITH_POST: {
                 retCursor = getPostsByPost(uri, projection, sortOrder);
                 break;
             }

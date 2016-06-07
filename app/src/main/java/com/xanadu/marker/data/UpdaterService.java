@@ -2,6 +2,7 @@ package com.xanadu.marker.data;
 
 import android.app.IntentService;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -34,10 +35,12 @@ import java.util.List;
 public class UpdaterService extends IntentService {
     private static final String TAG = "UpdaterService";
 
-    public static final String BROADCAST_ACTION_STATE_CHANGE
-            = "com.xanadu.marker.intent.action.STATE_CHANGE";
-    public static final String EXTRA_REFRESHING
-            = "com.xanadu.marker.intent.extra.REFRESHING";
+//    public static final String BROADCAST_ACTION_STATE_CHANGE
+//            = "com.xanadu.marker.intent.action.STATE_CHANGE";
+//    public static final String EXTRA_REFRESHING
+//            = "com.xanadu.marker.intent.extra.REFRESHING";
+    public static final String ACTION_DATA_UPDATED =
+            "com.xanadu.marker.intent.action.ACTION_DATA_UPDATED";
 
     public static final String EXTRA_WFS_QUERY_BOX
             = "com.xanadu.marker.intent.extra.WFS_QUERY_BOX";
@@ -209,6 +212,8 @@ public class UpdaterService extends IntentService {
 
                         }
                         getContentResolver().bulkInsert(PostsEntry.CONTENT_URI, values);
+
+                        updateWidgets();
                     }
 
                     // Update the next page token
@@ -299,6 +304,7 @@ public class UpdaterService extends IntentService {
                             value.put(PostsEntry.COLUMN_URL, post.getUrl());
 
                             getContentResolver().insert(PostsEntry.CONTENT_URI, value);
+                            updateWidgets();
                         }
                         else
                         {
@@ -373,5 +379,14 @@ public class UpdaterService extends IntentService {
 
             getContentResolver().insert(BlogsEntry.CONTENT_URI, value);
         }
+    }
+
+    // TODO move this into sync service
+    private void updateWidgets() {
+        Context context = this;
+        // Setting the package ensures that only components in our app will receive the broadcast
+        Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
+                .setPackage(context.getPackageName());
+        context.sendBroadcast(dataUpdatedIntent);
     }
 }

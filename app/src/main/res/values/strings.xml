@@ -38,4 +38,5 @@
     <string name="blogs_list_item_date_prefix">Last Updated: </string>
     <string name="post_list_item_date_prefix">Published: </string>
 
+    <string name="title_widget_latest_post">Latest Blog Post</string>
 </resources>
