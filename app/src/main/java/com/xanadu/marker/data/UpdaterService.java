@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.util.Log;
 
 import com.cocoahero.android.geojson.Feature;
@@ -118,37 +119,41 @@ public class UpdaterService extends IntentService {
                     value.put(PlacesEntry.COLUMN_NAME, properties.getString(MarkerContract.MARKER_DB_PLACE_NAME));
                     value.put(PlacesEntry.COLUMN_ABOUT, properties.getString(MarkerContract.MARKER_DB_PLACE_ABOUT));
 
-                    // blog
-                    Cursor blogCursor = getContentResolver().query(
-                            MarkerContract.BlogsEntry.CONTENT_URI,
-                            new String[] { BlogsEntry._ID },
-                            BlogsEntry.COLUMN_SERVICE_BLOG_ID + " = ?",
-                            new String[]{properties.getString(MarkerContract.MARKER_DB_BLOG_BLOG_ID)},
-                            null);
-
-                    if (blogCursor.getCount() != 1) {
-                        // add it
-                        value = new ContentValues();
-                        value.put(BlogsEntry.COLUMN_SERVICE_BLOG_ID, properties.getString(MarkerContract.MARKER_DB_BLOG_BLOG_ID));
-                        value.put(BlogsEntry.COLUMN_BLOG_ID, properties.getString(MarkerContract.MARKER_DB_BLOG_BLOG_ID));
-                        getContentResolver().insert(BlogsEntry.CONTENT_URI, value);
-                    }
-
-                    // post
-                    Cursor postCursor = getContentResolver().query(
-                            MarkerContract.PostsEntry.CONTENT_URI,
-                            new String[] { PostsEntry._ID },
-                            PostsEntry.COLUMN_SERVICE_POST_ID + " = ?",
-                            new String[]{properties.getString(MarkerContract.MARKER_DB_POST_POST_ID)},
-                            null);
-
-                    if (postCursor.getCount() != 1) {
-                        // add it
-                        value = new ContentValues();
-                        value.put(PostsEntry.COLUMN_SERVICE_POST_ID, properties.getString(MarkerContract.MARKER_DB_POST_POST_ID));
-                        value.put(PostsEntry.COLUMN_POST_ID, properties.getString(MarkerContract.MARKER_DB_POST_POST_ID));
-                        getContentResolver().insert(PostsEntry.CONTENT_URI, value);
-                    }
+//                    Uri newPlaceUri = getContentResolver().insert(PlacesEntry.CONTENT_URI, value);
+//                    String placeId = PlacesEntry.getPlaceFromUri(newPlaceUri);
+//
+//                    // blog
+//                    Cursor blogCursor = getContentResolver().query(
+//                            MarkerContract.BlogsEntry.CONTENT_URI,
+//                            new String[] { BlogsEntry._ID },
+//                            BlogsEntry.COLUMN_SERVICE_BLOG_ID + " = ?",
+//                            new String[]{properties.getString(MarkerContract.MARKER_DB_BLOG_BLOG_ID)},
+//                            null);
+//
+//                    if (blogCursor.getCount() != 1) {
+//                        // add it
+//                        value = new ContentValues();
+//                        value.put(BlogsEntry.COLUMN_SERVICE_BLOG_ID, properties.getString(MarkerContract.MARKER_DB_BLOG_BLOG_ID));
+//                        value.put(BlogsEntry.COLUMN_BLOG_ID, properties.getString(MarkerContract.MARKER_DB_BLOG_BLOG_ID));
+//                        getContentResolver().insert(BlogsEntry.CONTENT_URI, value);
+//                    }
+//
+//                    // post
+//                    Cursor postCursor = getContentResolver().query(
+//                            MarkerContract.PostsEntry.CONTENT_URI,
+//                            new String[] { PostsEntry._ID },
+//                            PostsEntry.COLUMN_SERVICE_POST_ID + " = ?",
+//                            new String[]{properties.getString(MarkerContract.MARKER_DB_POST_POST_ID)},
+//                            null);
+//
+//                    if (postCursor.getCount() != 1) {
+//                        // add it
+//                        value = new ContentValues();
+//                        value.put(PostsEntry.COLUMN_SERVICE_POST_ID, properties.getString(MarkerContract.MARKER_DB_POST_POST_ID));
+//                        value.put(PostsEntry.COLUMN_POST_ID, properties.getString(MarkerContract.MARKER_DB_POST_POST_ID));
+//                        value.put(PostsEntry.COLUMN_PLACE_KEY, placeId);
+//                        getContentResolver().insert(PostsEntry.CONTENT_URI, value);
+//                    }
                 }
 
                 getContentResolver().bulkInsert(PlacesEntry.CONTENT_URI, values);
@@ -194,24 +199,39 @@ public class UpdaterService extends IntentService {
                     List<Post> items = posts.getItems();
                     if (items != null && !items.isEmpty()) {
 
-                        ContentValues[] values = new ContentValues[items.size()];
                         for (int i = 0; i < items.size(); i++) {
                             Post post = items.get(i);
 
-                            ContentValues value = values[i] = new ContentValues();
+                            Cursor postCursor = getContentResolver().query(
+                                    MarkerContract.PostsEntry.CONTENT_URI,
+                                    new String[] { PostsEntry._ID },
+                                    PostsEntry.COLUMN_SERVICE_POST_ID + " = ?",
+                                    new String[]{post.getId()},
+                                    null);
+
+                            ContentValues value = new ContentValues();
                             value.put(PostsEntry.COLUMN_PUBLISHED, post.getPublished().getValue());
                             value.put(PostsEntry.COLUMN_IMAGE_URI,
                                     post.getImages() != null && post.getImages().size() > 0 ?
                                             post.getImages().get(0).getUrl() : null);
                             value.put(PostsEntry.COLUMN_TITLE, post.getTitle());
-                            value.put(PostsEntry.COLUMN_SERVICE_POST_ID, post.getId());
                             value.put(PostsEntry.COLUMN_POST_ID, post.getId());
                             value.put(PostsEntry.COLUMN_BLOG_KEY, blogItem._id);
-                            value.put(PostsEntry.COLUMN_PLACE_KEY, "TODO"); //TODO
                             value.put(PostsEntry.COLUMN_URL, post.getUrl());
 
+                            if (postCursor.getCount() != 1) {
+                                getContentResolver().insert(PostsEntry.CONTENT_URI, value);
+                            }
+                            else {
+                                postCursor.moveToFirst();
+                                getContentResolver().update(
+                                        PostsEntry.CONTENT_URI,
+                                        value,
+                                        PostsEntry._ID + " = ?",
+                                        new String[]{Integer.toString(postCursor.getInt(0))});
+                            }
+
                         }
-                        getContentResolver().bulkInsert(PostsEntry.CONTENT_URI, values);
 
                         updateWidgets();
                     }
@@ -291,6 +311,13 @@ public class UpdaterService extends IntentService {
                         Post post = BloggerApiUtil.fetchPost(query.service_blog_id, query.service_post_id);
                         if (post != null)
                         {
+                            Cursor postCursor = getContentResolver().query(
+                                    MarkerContract.PostsEntry.CONTENT_URI,
+                                    new String[] { PostsEntry._ID },
+                                    PostsEntry.COLUMN_SERVICE_POST_ID + " = ?",
+                                    new String[]{post.getId()},
+                                    null);
+
                             ContentValues value = new ContentValues();
                             value.put(PostsEntry.COLUMN_PUBLISHED, post.getPublished().getValue());
                             value.put(PostsEntry.COLUMN_IMAGE_URI,
@@ -300,10 +327,19 @@ public class UpdaterService extends IntentService {
                             value.put(PostsEntry.COLUMN_SERVICE_POST_ID, post.getId());
                             value.put(PostsEntry.COLUMN_POST_ID, post.getId());
                             value.put(PostsEntry.COLUMN_BLOG_KEY, blog_id);
-                            value.put(PostsEntry.COLUMN_PLACE_KEY, "TODO"); //TODO
                             value.put(PostsEntry.COLUMN_URL, post.getUrl());
 
-                            getContentResolver().insert(PostsEntry.CONTENT_URI, value);
+                            if (postCursor.getCount() != 1) {
+                                getContentResolver().insert(PostsEntry.CONTENT_URI, value);
+                            }
+                            else {
+                                postCursor.moveToFirst();
+                                getContentResolver().update(
+                                        PostsEntry.CONTENT_URI,
+                                        value,
+                                        PostsEntry._ID + " = ?",
+                                        new String[]{Integer.toString(postCursor.getInt(0))});
+                            }
                             updateWidgets();
                         }
                         else

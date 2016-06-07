@@ -2,6 +2,7 @@ package com.xanadu.marker;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -21,7 +22,9 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.google.android.gms.location.places.Place;
 import com.xanadu.marker.data.BlogItem;
+import com.xanadu.marker.data.PlaceLoader;
 import com.xanadu.marker.data.PostItem;
 import com.xanadu.marker.data.PostLoader;
 import com.xanadu.marker.data.UpdaterService;
@@ -38,7 +41,8 @@ public class PostFragment
 {
     private static final String TAG = "PostFragment";
     private static final String ARG_POST_ITEM = "post_item";
-//    private static final int POST_VIEW_LOADER = 4;
+    private static final int POST_VIEW_LOADER = 4;
+    private static final int PLACE_VIEW_LOADER = 5;
 //
 //    private final SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("EEE, MMM d, yyyy",
 //            java.util.Locale.getDefault());
@@ -145,6 +149,9 @@ public class PostFragment
             //noinspection SimplifiableIfStatement
             case R.id.action_post_map:
                 Log.d(TAG, "Received map menu action");
+                getLoaderManager().initLoader(PLACE_VIEW_LOADER, null, this);
+
+
                 return true;
             case R.id.action_post_share:
                 Log.d(TAG, "Received share menu action");
@@ -162,28 +169,51 @@ public class PostFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
+        return PlaceLoader.newInstanceForItemId(getContext(), mPostItem.place_key);
         //return PostLoader.newInstanceForItemId(getContext(), mPostItem._id);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data != null && data.moveToFirst())
-        {
-            String content = data.getString(PostLoader.COLUMN_CONTENT);
-            if(content != null)
-            {
-                if (Build.VERSION.SDK_INT < 18) {
-                    mWebView.clearView();
-                } else {
-                    mWebView.loadUrl("about:blank");
-                }
 
-                mWebView.loadData(content, "text/html", "utf-8");
-                mWebView.getSettings().setLoadWithOverviewMode(true);
-                mWebView.getSettings().setUseWideViewPort(true);
-            }
+        switch (loader.getId()) {
+            case POST_VIEW_LOADER:
+                if (data != null && data.moveToFirst()) {
+                    String content = data.getString(PostLoader.COLUMN_CONTENT);
+                    if (content != null) {
+                        if (Build.VERSION.SDK_INT < 18) {
+                            mWebView.clearView();
+                        } else {
+                            mWebView.loadUrl("about:blank");
+                        }
+
+                        mWebView.loadData(content, "text/html", "utf-8");
+                        mWebView.getSettings().setLoadWithOverviewMode(true);
+                        mWebView.getSettings().setUseWideViewPort(true);
+                    }
+                }
+                break;
+            case PLACE_VIEW_LOADER:
+                if(data == null || !data.moveToFirst())
+                    break;
+
+                // Create a Uri from an intent string. Use the result to create an Intent.
+                Uri gmmIntentUri = Uri.parse("geo:" +
+                        data.getDouble(PlaceLoader.Query.COLUMN_COORD_LAT) + "," +
+                        data.getDouble(PlaceLoader.Query.COLUMN_COORD_LONG) + ",?q=" +
+                        Uri.encode(data.getString(PlaceLoader.Query.COLUMN_PLACE_NAME)));
+
+                // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                // Make the Intent explicit by setting the Google Maps package
+                mapIntent.setPackage("com.google.android.apps.maps");
+
+                // Attempt to start an activity that can handle the Intent
+                startActivity(mapIntent);
+                break;
+            default:
         }
+
     }
 
     @Override

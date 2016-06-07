@@ -16,6 +16,7 @@ public class PostItem implements Parcelable {
     public String post_id;
     public String service_post_id;
     public int _id;
+    public int place_key;
     public long published;
     public BlogItem blogItem;
 
@@ -27,6 +28,7 @@ public class PostItem implements Parcelable {
         this.post_id = cursor.getString(PostLoader.COLUMN_POST_ID);
         this.service_post_id = cursor.getString(PostLoader.COLUMN_SERVICE_POST_ID);
         this._id = cursor.getInt(PostLoader._ID);
+        this.place_key = cursor.getInt(PostLoader.COLUMN_PLACE_KEY);
         this.published = cursor.getLong(PostLoader.COLUMN_PUBLISHED);
         this.blogItem = blogItem;
     }
@@ -46,6 +48,7 @@ public class PostItem implements Parcelable {
         this.service_post_id = data[4];
 
         this._id = in.readInt();
+        this.place_key = in.readInt();
 
         this.published = in.readLong();
     }
@@ -65,6 +68,7 @@ public class PostItem implements Parcelable {
                 this.service_post_id
         });
         dest.writeInt(_id);
+        dest.writeInt(place_key);
         dest.writeLong(published);
     }
 

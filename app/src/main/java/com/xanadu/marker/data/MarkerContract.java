@@ -94,6 +94,15 @@ public class MarkerContract {
         public static Uri buildPlacesBlogPostUri() {
             return BASE_CONTENT_URI.buildUpon().appendPath(PATH_PLACES).appendPath(PATH_BLOG).appendPath(PATH_POST).build();
         }
+
+        @Nullable
+        public static String getPlaceFromUri(Uri uri) {
+            List<String> segments = uri.getPathSegments();
+            if (segments != null && segments.get(0).equals(PATH_PLACES))
+                return segments.get(1);
+            else
+                return null;
+        }
     }
 
     /* Inner class that defines the table contents of the blogs table */
@@ -123,6 +132,8 @@ public class MarkerContract {
 
         // Human readable description
         public static final String COLUMN_DESC = "desc";
+
+        public static final String COLUMN_URI = "uri";
 
         // Date, stored as long in milliseconds since the epoch. previous is used to
         // determine if the posts for a blog needs to be updated
@@ -161,6 +172,8 @@ public class MarkerContract {
 
         // The blog id is what is sent to marker to get more info about this post
         public static final String COLUMN_POST_ID = "post_id";
+
+        public static final String COLUMN_URI = "uri";
 
         // URI to an image for the post
         public static final String COLUMN_IMAGE_URI = "image_uri";

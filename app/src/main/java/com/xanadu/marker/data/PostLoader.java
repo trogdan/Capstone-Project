@@ -19,6 +19,7 @@ public class PostLoader extends CursorLoader {
     public static final int COLUMN_SERVICE_POST_ID = 5;
     public static final int COLUMN_URL = 6;
     public static final int COLUMN_CONTENT = 7;
+    public static final int COLUMN_PLACE_KEY = 7;
 
     public static PostLoader newAllPostsInstance(Context context) {
         return new PostLoader(context, PostsEntry.CONTENT_URI);
@@ -48,7 +49,8 @@ public class PostLoader extends CursorLoader {
                 MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_IMAGE_URI,
                 MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_SERVICE_POST_ID,
                 MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_URL,
-                MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_CONTENT
+                MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_CONTENT,
+                MarkerContract.PATH_POSTS + "." + PostsEntry.COLUMN_PLACE_KEY
         };
 
     }

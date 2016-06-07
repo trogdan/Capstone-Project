@@ -24,6 +24,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
+import com.google.android.gms.maps.model.Marker;
+
 public class MarkerProvider extends ContentProvider {
 
     private static final String TAG = "MarkerProvider";
@@ -34,6 +36,7 @@ public class MarkerProvider extends ContentProvider {
 
     static final int PLACES = 100;
     static final int PLACES_BLOG_POST = 101;
+    static final int PLACE_WITH_PLACE = 102;
     static final int BLOGS = 200;
     static final int POSTS = 300;
     static final int POSTS_WITH_PLACE= 301;
@@ -171,6 +174,23 @@ public class MarkerProvider extends ContentProvider {
         );
     }
 
+    private Cursor getPlacesByPlace(Uri uri, String[] projection, String sortOrder) {
+        String placeFromUri = MarkerContract.PlacesEntry.getPlaceFromUri(uri);
+
+        String[] selectionArgs = new String[]{placeFromUri};
+        String selection = sPlaceIdSelection;
+
+        return mOpenHelper.getReadableDatabase().query(
+                MarkerContract.PlacesEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
     static UriMatcher buildUriMatcher() {
         // I know what you're thinking.  Why create a UriMatcher when you can use regular
         // expressions instead?  Because you're not crazy, that's why.
@@ -183,6 +203,8 @@ public class MarkerProvider extends ContentProvider {
 
         // For each type of URI you want to add, create a corresponding code.
         matcher.addURI(authority, MarkerContract.PATH_PLACES, PLACES);
+        matcher.addURI(authority, MarkerContract.PATH_PLACES + "/#", PLACE_WITH_PLACE);
+
         matcher.addURI(authority, MarkerContract.PATH_BLOGS, BLOGS);
         matcher.addURI(authority, MarkerContract.PATH_POSTS, POSTS);
         matcher.addURI(authority, MarkerContract.PATH_POSTS + "/#",
@@ -221,6 +243,8 @@ public class MarkerProvider extends ContentProvider {
                 return MarkerContract.PostsEntry.CONTENT_ITEM_TYPE;
             case PLACES:
                 return MarkerContract.PlacesEntry.CONTENT_TYPE;
+            case PLACE_WITH_PLACE:
+                return MarkerContract.PostsEntry.CONTENT_ITEM_TYPE;
             case BLOGS:
                 return MarkerContract.BlogsEntry.CONTENT_TYPE;
             case POSTS:
@@ -255,6 +279,11 @@ public class MarkerProvider extends ContentProvider {
             // "posts/#"
             case POST_WITH_POST: {
                 retCursor = getPostsByPost(uri, projection, sortOrder);
+                break;
+            }
+            // "places/#"
+            case PLACE_WITH_PLACE: {
+                retCursor = getPlacesByPlace(uri, projection, sortOrder);
                 break;
             }
             // "places/blog/post" returns the blog_id and post_id
