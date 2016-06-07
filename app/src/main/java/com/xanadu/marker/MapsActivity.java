@@ -221,6 +221,8 @@ public class MapsActivity
 
             }
         }
+        else
+            mGoogleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             Transition reenterTrans = new Slide();
@@ -228,7 +230,7 @@ public class MapsActivity
             getWindow().setExitTransition(reenterTrans);
             getWindow().setBackgroundDrawable(new ColorDrawable(0xFFFFFF)); // Clear the splash screen
         }
-        mGoogleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
+
     }
 
     @Override
@@ -240,6 +242,10 @@ public class MapsActivity
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay!
+                    if (mGoogleApiClient == null) {
+                        mGoogleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
+                        mGoogleApiClient.connect();
+                    }
 
                 } else {
 
