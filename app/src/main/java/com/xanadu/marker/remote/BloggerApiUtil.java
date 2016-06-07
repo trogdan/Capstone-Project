@@ -1,6 +1,7 @@
 package com.xanadu.marker.remote;
 
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.api.client.http.HttpTransport;
@@ -19,6 +20,7 @@ import java.io.IOException;
  * Created by dan on 5/30/16.
  */
 public class BloggerApiUtil {
+
     private static final String TAG = "BloggerApiUtil";
 
     // Configure the Java API Client for Installed Native App
@@ -32,12 +34,16 @@ public class BloggerApiUtil {
     private static final Blogger.Blogs blogs = builder.build().blogs();
     private static final Blogger.Posts posts = builder.build().posts();
 
-    private BloggerApiUtil() {}
+    private static String mApiKey;
+    private BloggerApiUtil() { }
+
+    public static void initKey(String apiKey) { BloggerApiUtil.mApiKey = apiKey; }
 
     public static Blog fetchBlog(String blogUrl) {
+
         try {
             Blogger.Blogs.GetByUrl getter = blogs.getByUrl(blogUrl);
-            getter.setKey("AIzaSyAKhkqh332VCZRqOGxkXeCfQwDj5rZGCfY");
+            getter.setKey(mApiKey);
             Blog blog = getter.execute();
             return blog;
             //Log.d(TAG, "Blog title: " + blog.getName());
@@ -52,7 +58,7 @@ public class BloggerApiUtil {
     public static Blog fetchBlogById(String blogId) {
         try {
             Blogger.Blogs.Get getter = blogs.get(blogId);
-            getter.setKey("AIzaSyAKhkqh332VCZRqOGxkXeCfQwDj5rZGCfY");
+            getter.setKey(mApiKey);
             Blog blog = getter.execute();
             return blog;
             //Log.d(TAG, "Blog title: " + blog.getName());
@@ -68,7 +74,7 @@ public class BloggerApiUtil {
     {
         try {
             Blogger.Posts.List lister = posts.list(blogId);
-            lister.setKey("AIzaSyAKhkqh332VCZRqOGxkXeCfQwDj5rZGCfY");
+            lister.setKey(mApiKey);
 
             if (nextPageToken != null)
             {
@@ -93,7 +99,7 @@ public class BloggerApiUtil {
     {
         try {
             Blogger.Posts.Get getter = posts.get(blogId, postId);
-            getter.setKey("AIzaSyAKhkqh332VCZRqOGxkXeCfQwDj5rZGCfY");
+            getter.setKey(mApiKey);
             getter.setFetchImages(true);
             getter.setFetchBody(true);
 
