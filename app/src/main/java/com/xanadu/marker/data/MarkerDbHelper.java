@@ -56,7 +56,7 @@ public class MarkerDbHelper extends SQLiteOpenHelper {
                 BlogsEntry.COLUMN_NAME + " TEXT, " +
                 BlogsEntry.COLUMN_DESC + " TEXT, " +
                 BlogsEntry.COLUMN_IMAGE_URI + " TEXT, " +
-                BlogsEntry.COLUMN_URL + " TEXT UNIQUE," +
+                BlogsEntry.COLUMN_URL + " TEXT," +
                 BlogsEntry.COLUMN_LAST_UPDATED + " INTEGER, " +
                 BlogsEntry.COLUMN_PREV_LAST_UPDATED + " INTEGER, " +
                 BlogsEntry.COLUMN_POST_COUNT + " INTEGER, " +
@@ -70,7 +70,7 @@ public class MarkerDbHelper extends SQLiteOpenHelper {
                 PostsEntry.COLUMN_SERVICE_POST_ID + " TEXT, " +
                 PostsEntry.COLUMN_TITLE + " TEXT, " +
                 PostsEntry.COLUMN_IMAGE_URI + " TEXT, " +
-                PostsEntry.COLUMN_URL + " TEXT UNIQUE, " +
+                PostsEntry.COLUMN_URL + " TEXT, " +
                 PostsEntry.COLUMN_PUBLISHED + " INTEGER, " +
                 PostsEntry.COLUMN_CONTENT + " TEXT " +
                 " );";

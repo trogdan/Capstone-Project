@@ -10,7 +10,9 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,7 +48,7 @@ public class PostFragment
 //
 //    private final SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("EEE, MMM d, yyyy",
 //            java.util.Locale.getDefault());
-
+    private ShareActionProvider mShareActionProvider;
     private PostItem mPostItem;
     private WebView mWebView;
 
@@ -138,6 +140,17 @@ public class PostFragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_post, menu);
+
+        // Locate MenuItem with ShareActionProvider
+        MenuItem item = menu.findItem(R.id.action_post_share);
+
+        // Fetch and store ShareActionProvider
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(createSharePostUriIntent());
+        }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -147,12 +160,12 @@ public class PostFragment
         // Handle action buttons
         switch(item.getItemId()) {
             //noinspection SimplifiableIfStatement
-            case R.id.action_post_map:
-                Log.d(TAG, "Received map menu action");
-                getLoaderManager().initLoader(PLACE_VIEW_LOADER, null, this);
-
-
-                return true;
+//            case R.id.action_post_map:
+//                Log.d(TAG, "Received map menu action");
+//                getLoaderManager().initLoader(PLACE_VIEW_LOADER, null, this);
+//
+//
+//                return true;
             case R.id.action_post_share:
                 Log.d(TAG, "Received share menu action");
                 return true;
@@ -219,4 +232,12 @@ public class PostFragment
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {}
 
+    private static final String MARKER_SHARE_HASHTAG = " #Marker";
+    private Intent createSharePostUriIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, mPostItem.uri + " " + MARKER_SHARE_HASHTAG);
+        return shareIntent;
+    }
 }

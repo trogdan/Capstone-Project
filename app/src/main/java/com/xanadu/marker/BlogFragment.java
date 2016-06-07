@@ -8,10 +8,12 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 
 import com.bumptech.glide.Glide;
 import com.paginate.Paginate;
@@ -51,6 +54,7 @@ public class BlogFragment
 
     private BlogItem mBlogItem;
 
+    private ShareActionProvider mShareActionProvider;
     private OnListFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
     private PostItemRecyclerViewAdapter mPostItemAdapter;
@@ -93,6 +97,8 @@ public class BlogFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_blog, container, false);
 
@@ -140,7 +146,6 @@ public class BlogFragment
         });
         mSwipeRefreshLayout.setEnabled(false);
 
-        setHasOptionsMenu(true);
 
         setupPagination();
 
@@ -150,6 +155,17 @@ public class BlogFragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_blog, menu);
+
+        // Locate MenuItem with ShareActionProvider
+        MenuItem item = menu.findItem(R.id.action_blog_share);
+
+        // Fetch and store ShareActionProvider
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(createShareBlogUriIntent());
+        }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -289,4 +305,13 @@ public class BlogFragment
         void onListFragmentInteraction(PostItem item);
     }
 
+
+    private static final String MARKER_SHARE_HASHTAG = " #Marker";
+    private Intent createShareBlogUriIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, mBlogItem.uri + " " + MARKER_SHARE_HASHTAG);
+        return shareIntent;
+    }
 }

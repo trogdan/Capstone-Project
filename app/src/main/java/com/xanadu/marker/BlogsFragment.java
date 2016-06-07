@@ -199,4 +199,5 @@ public class BlogsFragment
         // TODO: Update argument type and name
         void onListFragmentInteraction(BlogItem item);
     }
+
 }
